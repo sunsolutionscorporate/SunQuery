@@ -6,4 +6,5 @@ node_modules/
 
 # Docker
 .docker/
+.vscode/
 docker-compose.override.yml
