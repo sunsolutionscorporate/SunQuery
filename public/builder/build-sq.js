@@ -1,6 +1,29 @@
-import fs from "fs";
-import path from "path";
-import { minify } from "terser";
+const fs = require('fs-extra');
+const path = require('path');
+const { minify } = require('terser');
+
+const srcDir = path.join(__dirname, '..', 'src', 'sunquery');
+const outputDir = path.join(__dirname, '..', 'dist');
+const outputFile = path.join(outputDir, 'sunquery.js');
+const outputFileMin = path.join(outputDir, 'sunquery.min.js');
+
+async function readFilesFromDir(dir) {
+   const files = await fs.readdir(dir);
+   const jsFiles = files.filter(file => file.endsWith('.js'));
+   let content = '';
+   for (const file of jsFiles) {
+      const filePath = path.join(dir, file);
+      const fileContent = await fs.readFile(filePath, 'utf-8');
+      content += fileContent + '\n';
+   }
+   return content;
+};
+
+
+const SRC_DIR = "src/sunquery";
+const EXTENSION_DIR = "src/sunquery/extensions";
+const HELPER_DIR = "src/sunquery/helpers";
+const PLUGIN_DIR = "src/sunquery/plugins";
 function convertFunctionsToMethods(code) {
    let i = 0;
    const L = code.length;
@@ -395,102 +418,90 @@ class CoreReader {
       };
    }
 };
-
 const code_instance = {
    method_global: new CoreReader('method-global'),
    method_static: new CoreReader('method-static'),
    method_instance: new CoreReader('method-instance'),
    method_helper: new CoreReader('method-helper'),
    plugins_form: new CoreReader('plugins-form'),
-   method_common: new CoreReader('method-common'),
+   // method_common: new CoreReader('method-common'),
    method_export: new CoreReader('method-export'),
 };
 
-const log = console.log;
-// Baca package.json untuk metadata
-const pkg = JSON.parse(fs.readFileSync("./package.json", "utf8"));
-// Path utama
-const SRC_DIR = "./src";
-const EXTENSION_DIR = "./extensions";
-const HELPER_DIR = "./helpers";
-const PLUGIN_DIR = "./plugins";
-const DIST_DIR = "./dist";
-const OUTPUT_FILE = path.join(DIST_DIR, "sunquery.js");
-const MIN_FILE = path.join(DIST_DIR, "sunquery.min.js");
-
-// Banner otomatis dari package.json
-const banner = `/*!
- * ${pkg.name}.js v${pkg.version}
- * ${pkg.description}
- * (c) ${new Date().getFullYear()} ${pkg.author}
- * Released under the ${pkg.license} License.
- */
-`;
-if (!fs.existsSync(DIST_DIR)) fs.mkdirSync(DIST_DIR, { recursive: true });
-// 1️) Ambil core
-const blok_core = CoreReader.splitTag(fs.readFileSync(path.join(SRC_DIR, "core.js"), "utf8"));
-let output = blok_core.remain;
-blok_core.results.forEach(ar => {
-   const tag = ar.tag.replace(/-/g, '_');
-   code_instance[tag].write(ar.code);
-})
-
-// 2) ambil common
-const blok_common = CoreReader.splitTag(fs.readFileSync(path.join(SRC_DIR, "common.js"), "utf8"));
-// let output = blok_common.remain;
-blok_common.results.forEach(ar => {
-   const tag = ar.tag.replace(/-/g, '_');
-   code_instance[tag].shift(ar.code);
-})
-
-// 2) ambil helper
-const helperFiles = fs.readdirSync(HELPER_DIR).filter(f => f.endsWith(".js"));
-for (const file of helperFiles) {
-   let blok_helper = CoreReader.splitTag(fs.readFileSync(path.join(HELPER_DIR, file), "utf8"));
-   blok_helper.results.forEach(ar => {
-      const tag = ar.tag.replace(/-/g, '_');
-      code_instance[tag].write(ar.code);
-   })
-}
-
-// 3) ambil extension
-const extensionfiles = fs.readdirSync(EXTENSION_DIR).filter(f => f.endsWith(".js"));
-for (const file of extensionfiles) {
-   let blok_extension = CoreReader.splitTag(fs.readFileSync(path.join(EXTENSION_DIR, file), "utf8"));
-   blok_extension.results.forEach(ar => {
-      const tag = ar.tag.replace(/-/g, '_');
-      code_instance[tag].write(ar.code);
-   })
-}
-
-// 4) ambil plugins
-const pluginfiles = fs.readdirSync(PLUGIN_DIR).filter(f => f.endsWith(".js"));
-for (const file of pluginfiles) {
-   let blok_plugin = CoreReader.splitTag(fs.readFileSync(path.join(PLUGIN_DIR, file), "utf8"));
-   blok_plugin.results.forEach(ar => {
-      const tag = ar.tag.replace(/-/g, '_');
-      code_instance[tag].write(ar.code);
-   })
-};
-
-// 
-output += code_instance.method_common.end();
-output += code_instance.method_global.end();
-output += code_instance.method_helper.end();
-output += code_instance.method_instance.end();
-output += code_instance.method_static.end();
-output += code_instance.plugins_form.end();
-output += code_instance.method_export.end();
-output = banner + "\n" + output;
-// 4️⃣ Simpan hasil build
-fs.writeFileSync(OUTPUT_FILE, output, "utf8");
-console.log(`✅ Build selesai! ${extensionfiles.length} extension`);
-console.log(`                  ${helperFiles.length} helper`);
-console.log(`                  ${pluginfiles.length} plugin`);
-// 5️⃣ Lanjut minify otomatis
-(async () => {
+async function buildJS() {
    try {
-      const result = await minify(output, {
+      // // Read template
+      // const template = await fs.readFile(path.join(srcDir, 'index.js'), 'utf-8');
+
+      // // Read sections
+      // const helpersContent = await readFilesFromDir(path.join(srcDir, 'helpers'));
+      // const staticsContent = await readFilesFromDir(path.join(srcDir, 'statics'));
+      // const instancesContent = await readFilesFromDir(path.join(srcDir, 'instances'));
+      // const pluginsContent = await readFilesFromDir(path.join(srcDir, 'plugins'));
+
+      // // Replace placeholders by inserting content after them
+      // let result = template
+      //    .replace(/(\/\/ kumpulan dari file helper)/, '$1\n\n' + helpersContent.trim())
+      //    .replace(/(\/\/ kumpulan dari statics)/, '$1\n\n' + staticsContent.trim())
+      //    .replace(/(\/\/ kumpulan dari instances)/, '$1\n\n' + instancesContent.trim())
+      //    .replace(/(\/\/ kumpulan dari plugins)/, '$1\n\n' + pluginsContent.trim());
+
+
+      // 1️) Ambil core
+      const blok_core = CoreReader.splitTag(fs.readFileSync(path.join(SRC_DIR, "index.js"), "utf8"));
+      let output = blok_core.remain;
+      blok_core.results.forEach(ar => {
+         const tag = ar.tag.replace(/-/g, '_');
+         code_instance[tag].write(ar.code);
+      });
+      // 2) ambil helper
+      const helperFiles = fs.readdirSync(HELPER_DIR).filter(f => f.endsWith(".js"));
+      for (const file of helperFiles) {
+         let blok_helper = CoreReader.splitTag(fs.readFileSync(path.join(HELPER_DIR, file), "utf8"));
+         blok_helper.results.forEach(ar => {
+            const tag = ar.tag.replace(/-/g, '_');
+            code_instance[tag].write(ar.code);
+         })
+      }
+
+      // 3) ambil extension
+      const extensionfiles = fs.readdirSync(EXTENSION_DIR).filter(f => f.endsWith(".js"));
+      for (const file of extensionfiles) {
+         let blok_extension = CoreReader.splitTag(fs.readFileSync(path.join(EXTENSION_DIR, file), "utf8"));
+         blok_extension.results.forEach(ar => {
+            const tag = ar.tag.replace(/-/g, '_');
+            code_instance[tag].write(ar.code);
+         })
+      }
+
+      // 4) ambil plugins
+      const pluginfiles = fs.readdirSync(PLUGIN_DIR).filter(f => f.endsWith(".js"));
+      for (const file of pluginfiles) {
+         let blok_plugin = CoreReader.splitTag(fs.readFileSync(path.join(PLUGIN_DIR, file), "utf8"));
+         blok_plugin.results.forEach(ar => {
+            const tag = ar.tag.replace(/-/g, '_');
+            code_instance[tag].write(ar.code);
+         })
+      };
+
+      // 
+      // output += code_instance.method_common.end();
+      output += code_instance.method_global.end();
+      output += code_instance.method_helper.end();
+      output += code_instance.method_instance.end();
+      output += code_instance.method_static.end();
+      output += code_instance.plugins_form.end();
+      output += code_instance.method_export.end();
+
+
+      // Ensure output directory exists
+      await fs.ensureDir(outputDir);
+
+      // Write unminified
+      await fs.writeFile(outputFile, output);
+
+      // Minify
+      const minified = await minify(output, {
          compress: {
             drop_console: false,
          },
@@ -499,10 +510,12 @@ console.log(`                  ${pluginfiles.length} plugin`);
             comments: /^!/, // hanya simpan banner yang diawali /*!
          },
       });
+      await fs.writeFile(outputFileMin, minified.code);
 
-      fs.writeFileSync(MIN_FILE, result.code, "utf8");
-      console.log(`✨ Minified: dist/sunquery.min.js (${(result.code.length / 1024).toFixed(2)} KB)`);
-   } catch (err) {
-      console.error("❌ Gagal minify:", err);
+      console.log('JS built successfully:', outputFile, 'and', outputFileMin);
+   } catch (error) {
+      console.error('Error building JS:', error);
    }
-})();
+}
+
+buildJS();
