@@ -1,0 +1,18 @@
+/* ****************** Chard ******************** */
+.card {
+  background: #ffffff0a;
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius);
+  padding: 10px 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.card canvas {
+  max-height: 300px;
+}

@@ -70,7 +70,7 @@ const layerManager = new class LayerManager {
    #createBackdrop(className = "") {
       const node = n.createElement("div", {
          class: "backdrop " + className,
-         style: `display:flex;position:fixed;width:100svw;height:100svh;z-index:${n.face.index()};overflow:hidden;top:0;left:0;`,
+         style: `display:grid;position:fixed;inset:0;z-index:${n.face.index()};overflow:hidden;`,
       });
       n(document.body).append(node).attr("backdrop", true);
       n(node).animate(

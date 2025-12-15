@@ -1,0 +1,84 @@
+.flex {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.flex.gap-5 {
+  gap: 5px;
+}
+.flex.gap-10 {
+  gap: 10px;
+}
+.flex.gap-15 {
+  gap: 15px;
+}
+.flex.gap-20 {
+  gap: 20px;
+}
+
+section {
+  all: unset;
+  box-sizing: border-box;
+}
+
+section > .head {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  gap: 5px;
+  background: transparent;
+  backdrop-filter: blur(3px);
+}
+
+section > .head > h1 {
+  background: linear-gradient(90deg, #0095c2 0%, rgb(255, 255, 255) 70%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  width: 100%;
+}
+
+section > .body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
+  grid-template-rows: auto 1fr;
+  gap: 2rem;
+}
+
+h1.center,
+h2.center,
+h3.center,
+h4.center,
+h5.center,
+h6.center {
+  text-align: center;
+}
+h1.left,
+h2.left,
+h3.left,
+h4.left,
+h5.left,
+h6.left {
+  text-align: left;
+}
+h1.right,
+h2.right,
+h3.right,
+h4.right,
+h5.right,
+h6.right {
+  text-align: right;
+}
+
+.flex.left {
+  justify-content: flex-start;
+}
+
+.flex.center {
+  justify-content: center;
+}
+
+.flex.right {
+  justify-content: flex-end;
+}

@@ -3,7 +3,7 @@ const path = require('path');
 const { minify } = require('terser');
 
 const srcDir = path.join(__dirname, '..', 'src', 'sunquery');
-const outputDir = path.join(__dirname, '..', 'dist');
+const outputDir = path.join(__dirname, '..', '..', 'dist');
 const outputFile = path.join(outputDir, 'sunquery.js');
 const outputFileMin = path.join(outputDir, 'sunquery.min.js');
 

@@ -1,0 +1,36 @@
+.backdrop {
+  position: fixed;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  padding-top: 10svh;
+  padding-inline: 1rem;
+
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+
+  background: #00000018;
+  backdrop-filter: blur(3px);
+}
+.modal {
+  padding: 1rem;
+  background: #021824;
+  border-radius: var(--radius);
+  border: 1px solid #ffffff33;
+  max-height: calc(100svh - 10svh - 2rem);
+  overflow-y: auto;
+  width: 100%;
+  animation: modalOpen 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal.lg {
+  max-width: 64rem;
+}
+.modal.md {
+  max-width: 42rem;
+}
+
+.modal.sm {
+  max-width: 28rem;
+}

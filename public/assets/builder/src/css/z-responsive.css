@@ -1,0 +1,24 @@
+@media (max-width: 640px) {
+  .backdrop {
+    padding: 1rem;
+    align-content: stretch; /* isi penuh vertikal */
+  }
+  .modal {
+    max-width: 100%;
+    max-height: 100svh;
+    height: 100%;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 390px) {
+  :root {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 270px) {
+  body {
+    padding: 0;
+  }
+}

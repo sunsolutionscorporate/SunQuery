@@ -1,0 +1,52 @@
+canvas.bg-sky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at bottom, #0d1b2a, #000000);
+  z-index: -2;
+}
+
+.background-earth-wrap {
+  position: fixed;
+  bottom: -80px;
+  left: -80px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  overflow: hidden;
+  animation: rotate 120s linear infinite;
+  background: radial-gradient(circle at 30% 30%, #0a6ab4, #000d1f 70%);
+  box-shadow: 0 0 60px #3ad4ff6c;
+  z-index: -1;
+}
+
+.earth {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: repeat-x;
+  animation: scrollMap 120s linear infinite;
+  background-image: url("../img/peta2.svg");
+  filter: hue-rotate(30deg) brightness(0.4);
+  fill: red;
+}
+
+@keyframes scrollMap {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -640px 0;
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
