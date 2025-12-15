@@ -409,8 +409,8 @@
       // Create modal
       console.log("MODAL", this);
       q.modal({
-        source: this,
-        content: "form-login.html",
+        source: this, // element pemicu
+        content: "form-login.html", //url | string | html | stringHtml
         size: "md",
       });
     });
