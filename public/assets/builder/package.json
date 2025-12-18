@@ -5,7 +5,8 @@
     "build": "node builder/build.js",
     "dev": "node builder/build.js --watch",
     "build-js": "node builder/build-sq.js",
-    "build-css": "node builder/build-css.js"
+    "build-css": "node builder/build-css.js",
+    "build-script": "node builder/build-script.js"
   },
   "devDependencies": {
     "chokidar": "^5.0.0",

@@ -1,0 +1,49 @@
+<div class="logo">
+  <img src="assets/img/logo.png" alt="" />
+</div>
+<div class="nav-button flex gap-20">
+  <button class="btn-icon"><i class="ph ph-sun"></i></button>
+  <button class="btn btn-primary">Sign</button>
+</div>
+
+<script>
+  const themeToggle = document.querySelector(".btn-icon");
+  const body = document.body;
+
+  themeToggle.addEventListener("click", function () {
+    const currentTheme = body.getAttribute("data-theme") || "light";
+    const newTheme = currentTheme === "light" ? "dark" : "light";
+
+    body.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+
+    const icon = themeToggle.querySelector("i");
+    icon.className = newTheme === "dark" ? "ph ph-moon" : "ph ph-sun";
+  });
+
+  // Load saved theme
+  const savedTheme = localStorage.getItem("theme") || "light";
+  body.setAttribute("data-theme", savedTheme);
+  const icon = themeToggle.querySelector("i");
+  icon.className = savedTheme === "dark" ? "ph ph-moon" : "ph ph-sun";
+
+  // Modal functionality for Sign button
+  const signBtn = document.querySelector(".btn-primary");
+  signBtn.addEventListener("click", function () {
+    // // Create modal
+    // q.modal({
+    //   header: {
+    //     title: 'dismiss="modal" Contoh dismiss="modal"',
+    //     close: true,
+    //   },
+    //   dismiss: {
+    //     esc: true,
+    //     backdrop: true,
+    //   },
+    //   source: this, // element pemicu
+    //   content: "form-login.html", //url | string | html | stringHtml
+    //   size: "md",
+    // });
+    q("main").load("form-login.html");
+  });
+</script>

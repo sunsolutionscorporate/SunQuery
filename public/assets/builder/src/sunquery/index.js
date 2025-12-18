@@ -376,6 +376,8 @@
          }
       };
 
+      const warn = console.warn;
+
 
       class EventBase extends EventTarget {
          constructor() { super() };

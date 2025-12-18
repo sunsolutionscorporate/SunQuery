@@ -16,36 +16,6 @@
   gap: 20px;
 }
 
-section {
-  all: unset;
-  box-sizing: border-box;
-}
-
-section > .head {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  gap: 5px;
-  background: transparent;
-  backdrop-filter: blur(3px);
-}
-
-section > .head > h1 {
-  background: linear-gradient(90deg, #0095c2 0%, rgb(255, 255, 255) 70%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  position: relative;
-  width: 100%;
-}
-
-section > .body {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
-  grid-template-rows: auto 1fr;
-  gap: 2rem;
-}
-
 h1.center,
 h2.center,
 h3.center,

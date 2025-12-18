@@ -1,6 +1,6 @@
 // @method-static
 
-function loader(options) {
+function loader_old(options) {
    // sunQuery,html,string
    options = { ...n.loader._global_config, ...options };
    let target;
@@ -21,6 +21,32 @@ function loader(options) {
    spin.append(title);
    const ind = n.createElement('h2', { text: options?.text || 'loading...' })
    wrap.append(spin, ind);
+   n(target).append(wrap);
+   n(wrap).css("z-index", n.face.index());
+   return wrap;
+};
+function loader(options) {
+   // sunQuery,html,string
+   options = { ...n.loader._global_config, ...options };
+   let target;
+   if (n.helper.type(options?.target, 'string')) {
+      target = d.querySelector(options?.target);
+   } else if (n.helper.type(options?.target, 'html')) {
+      target = options?.target;
+   } else if (n.helper.type(options?.target, 'sunQuery')) {
+      target = options?.target[0];
+   } else {
+      console.error(`[loader] target '${options?.target}' not found on page`);
+      return;
+   }
+   const id = n.helper.generateUniqueId(5);
+   const wrap = n.createElement('div', { class: 'loader', id: id });
+   const logo = options?.logo ?
+      n.createElement('img', { alt: 'logo', src: 'assets/img/logo.png' }) :
+      n.createElement('span', { text: 'loading...' });
+   const dot = n.createElement('div', { class: 'loader-dots', html: `<span></span><span></span><span></span>` });
+
+   wrap.append(logo, dot);
    n(target).append(wrap);
    n(wrap).css("z-index", n.face.index());
    return wrap;

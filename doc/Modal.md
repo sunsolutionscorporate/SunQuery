@@ -1,8 +1,12 @@
 # SunQuery Modal
 
-Dokumentasi ini menjelaskan cara penggunaan **static method `q.modal()`** pada library **SunQuery**.
+Dokumentasi ini menjelaskan penggunaan **static method `q.modal()`** pada library **SunQuery**.
 
-Method ini digunakan untuk membuat dan menampilkan modal dialog secara dinamis, mirip dengan konsep modal pada jQuery-based UI library, namun dengan pendekatan modern dan fleksibel.
+Modal pada SunQuery dirancang dengan konsep **separation of concern**, antara:
+
+- **UI / struktur visual** (header)
+- **Perilaku / interaksi** (dismiss)
+- **Konfigurasi inti modal** (content, size, source)
 
 ---
 
@@ -12,237 +16,209 @@ Method ini digunakan untuk membuat dan menampilkan modal dialog secara dinamis, 
 q.modal(options);
 ```
 
-`q.modal()` merupakan **static method**, sehingga dipanggil langsung dari objek utama `q`, bukan dari instance hasil seleksi elemen.
+`q.modal()` adalah **static method**, dipanggil langsung dari objek utama `q`.
 
 ---
 
-## 2. Contoh Penggunaan
+## 2. Contoh Penggunaan (Final API)
 
 ```js
 q.modal({
-  source: this, // elemen pemicu
-  content: "form-login.html", // url | string | html | stringHtml
-  size: "md", // ukuran modal
+  header: {
+    title: "Contoh",
+    close: true,
+  },
+
+  dismiss: {
+    esc: true,
+    backdrop: true,
+  },
+
+  source: this, // elemen pemicu (opsional)
+  content: "contoh.html", // url | string | html | element
+  size: "md", // sm | md | lg | xl (dinormalisasi)
 });
 ```
-
-Contoh di atas akan:
-
-- Membuka sebuah modal
-- Mengambil konten dari file `form-login.html`
-- Menampilkan modal dengan ukuran sedang (`md`)
-- Mengaitkan modal dengan elemen pemicu (`source`)
 
 ---
 
 ## 3. Parameter `options`
 
-Parameter `options` berupa **object konfigurasi** yang bersifat opsional namun sangat disarankan untuk dikustomisasi.
+### 3.1 `header`
 
-### 3.1 `source`
-
-```js
-source: Element | null;
-```
-
-**Deskripsi:**
-Elemen DOM yang menjadi pemicu modal (misalnya tombol atau link).
-
-**Fungsi:**
-
-- Menentukan konteks modal
-- Dapat digunakan untuk positioning
-- Dapat dimanfaatkan untuk callback atau auto-close
-
-**Contoh:**
+Mengatur bagian **header modal** (opsional).
 
 ```js
-source: document.querySelector("#btnLogin");
+header: {
+  title: string | HTMLstring,
+  close: boolean,
+}
 ```
 
----
+#### Properti
 
-### 3.2 `content`
-
-```js
-content: string;
-```
-
-**Deskripsi:**
-Isi modal yang akan ditampilkan.
-
-**Jenis konten yang didukung:**
-
-| Tipe         | Contoh                          | Keterangan                      |
-| ------------ | ------------------------------- | ------------------------------- |
-| URL          | `"form-login.html"`             | Konten di-load via AJAX / fetch |
-| Plain Text   | `"Hello World"`                 | Ditampilkan sebagai teks        |
-| HTML String  | `"<b>Login</b>"`                | Dirender sebagai HTML           |
-| HTML Element | `document.createElement('div')` | Elemen DOM langsung             |
+| Properti | Default | Deskripsi                             |
+| -------- | ------- | ------------------------------------- |
+| `title`  | `null`  | Judul modal (string atau HTML string) |
+| `close`  | `true`  | Menampilkan tombol close di header    |
 
 **Catatan:**
-Jika berupa URL, SunQuery akan memuat konten secara asynchronous.
+
+- Jika `header` tidak didefinisikan, header tidak dibuat
+- Tombol close `true` saat title didefinisikan
 
 ---
 
-### 3.3 `size`
+### 3.2 `dismiss`
+
+Mengatur **perilaku penutupan modal**.
 
 ```js
-size: "sm" | "md" | "lg" | "xl";
+dismiss: {
+  esc: boolean,
+  backdrop: boolean,
+}
 ```
 
-**Deskripsi:**
-Menentukan ukuran modal.
+| Properti   | Default | Deskripsi                          |
+| ---------- | ------- | ---------------------------------- |
+| `esc`      | `true`  | Menutup modal dengan tombol ESC    |
+| `backdrop` | `true`  | Menutup modal dengan klik backdrop |
 
-**Pilihan ukuran:**
+**Catatan:**
 
-| Value | Keterangan             |
-| ----- | ---------------------- |
-| `sm`  | Modal kecil            |
-| `md`  | Modal sedang (default) |
-| `lg`  | Modal besar            |
-| `xl`  | Modal ekstra besar     |
-
-**Contoh:**
-
-```js
-size: "lg";
-```
+- Semua elemen dengan attribute `dismiss="modal"` akan menutup modal
 
 ---
 
-## 4. Default Configuration
-
-Jika parameter tidak diisi, SunQuery akan menggunakan nilai default berikut:
+### 3.3 `content`
 
 ```js
-q.modal({
-  source: null,
-  content: "",
-  size: "md",
-});
+content: string | HTMLElement;
 ```
+
+Menentukan isi modal.
+
+Jenis konten yang didukung:
+
+| Tipe        | Contoh                          | Keterangan                    |
+| ----------- | ------------------------------- | ----------------------------- |
+| URL         | `'login.html'`                  | Dimuat secara asynchronous    |
+| Text        | `'Hello World'`                 | Ditampilkan sebagai teks      |
+| HTML String | `'<b>Login</b>'`                | Dirender sebagai HTML         |
+| Element     | `document.createElement('div')` | Elemen DOM langsung           |
+| Array       | `[div,span]`                    | Array yang berisis Elemen DOM |
 
 ---
 
-## 5. Perilaku Modal
+### 3.4 `size`
 
-Secara default, modal yang dibuat dengan `q.modal()` memiliki perilaku sebagai berikut:
+```js
+size: string;
+```
 
-- Modal **dibungkus oleh sebuah elemen backdrop** yang dibuat otomatis
-- Backdrop berfungsi sebagai:
+Menentukan ukuran modal. SunQuery akan **menormalisasi nilai size**.
 
-  - Overlay latar belakang
-  - Wrapper utama modal
-  - Penangkap interaksi (klik / keyboard)
+Nilai yang didukung:
 
-Struktur DOM secara konseptual:
+| Input          | Dinormalisasi ke |
+| -------------- | ---------------- |
+| `sm`, `small`  | `sm`             |
+| `md`, `medium` | `md` (default)   |
+| `lg`, `large`  | `lg`             |
+
+---
+
+### 3.5 `source`
+
+```js
+source: HTMLElement | null;
+```
+
+Elemen pemicu modal.
+
+Digunakan untuk:
+
+- Konteks pembukaan modal
+- Pengembalian fokus
+- Integrasi event lanjutan
+
+Properti ini **opsional**.
+
+---
+
+## 4. Backdrop & Struktur DOM
+
+Setiap modal otomatis dibungkus oleh **backdrop**.
+
+Struktur konseptual:
 
 ```html
 <div class="backdrop">
   <div class="modal md">
-    <!-- konten modal -->
+    <div class="modal-header">...</div>
+    <div class="modal-body">...</div>
   </div>
 </div>
 ```
 
-- Backdrop dan modal **ditambahkan ke DOM secara dinamis**
+- Backdrop dibuat dan dihapus otomatis
 - Satu modal selalu memiliki satu backdrop
 
 ---
 
-## 6. Menutup / Keluar dari Modal
+## 5. Cara Menutup Modal
 
-SunQuery menyediakan beberapa cara bawaan (default) untuk menutup modal.
+Modal dapat ditutup melalui:
 
-### 6.1 Menutup Modal dengan Keyboard (ESC)
-
-- Menekan tombol **`ESC`** akan otomatis menutup modal yang sedang aktif
-- Event ini hanya aktif selama modal terbuka
-
-Perilaku ini cocok untuk meningkatkan **aksesibilitas (UX)**.
-
----
-
-### 6.2 Menutup Modal dengan Tombol `[dismiss="modal"]`
-
-Elemen apa pun di dalam modal yang memiliki attribute berikut:
+1. Tombol close di header
+2. Elemen dengan attribute:
 
 ```html
 dismiss="modal"
 ```
 
-akan otomatis berfungsi sebagai **tombol penutup modal**.
-
-**Contoh:**
-
-```html
-<button dismiss="modal">Tutup</button>
-```
-
-atau
-
-```html
-<a href="#" dismiss="modal">Close</a>
-```
-
-Ketika elemen tersebut diklik:
-
-- Modal akan ditutup
-- Backdrop akan dihapus dari DOM
+3. Tombol **ESC** (jika `dismiss.esc = true`)
+4. Klik backdrop (jika `dismiss.backdrop = true`)
 
 ---
 
-### 6.3 Menutup Modal dengan Klik Backdrop
+## 6. Default Configuration
 
-- Klik pada area backdrop (di luar modal) akan menutup modal
-- Klik di dalam area modal **tidak** menutup modal
-
----
-
-## 6. Contoh Kasus Nyata
-
-### 6.1 Modal Login
-
-```js
-document.querySelector("#loginBtn").addEventListener("click", function () {
-  q.modal({
-    source: this,
-    content: "form-login.html",
-    size: "sm",
-  });
-});
-```
-
-### 6.2 Modal Informasi Sederhana
+Jika tidak ditentukan, SunQuery menggunakan default berikut:
 
 ```js
 q.modal({
-  content: "<h3>Info</h3><p>Operasi berhasil</p>",
+  header: null,
+  dismiss: {
+    esc: true,
+    backdrop: true,
+  },
   size: "md",
 });
 ```
 
 ---
 
-## 7. Catatan Penting
+## 7. Catatan Desain
 
-- `q.modal()` adalah **static method**, bukan instance method
-- Konten URL dimuat secara asynchronous
-- Modal dapat dikembangkan dengan fitur lanjutan seperti:
+- `q.modal()` adalah **static method**
+- API mengikuti prinsip **UI vs Behavior separation**
+- Modal bersifat extensible untuk fitur lanjutan seperti:
 
-  - Callback lifecycle (`onOpen`, `onClose`)
-  - Animasi
-  - Integrasi dengan event SunQuery
+  - lifecycle hooks
+  - animasi
+  - modal stack
+  - aksesibilitas
 
 ---
 
 ## 8. Penutup
 
-Method `q.modal()` dirancang agar:
+Desain API modal SunQuery difokuskan pada:
 
-- Mudah digunakan
-- Fleksibel
-- Konsisten dengan filosofi SunQuery
+- Kejelasan
+- Konsistensi
+- Skalabilitas
 
-Dokumentasi ini dapat dikembangkan seiring bertambahnya fitur modal di SunQuery.
+Dokumentasi ini merupakan **versi final** dari API modal SunQuery.

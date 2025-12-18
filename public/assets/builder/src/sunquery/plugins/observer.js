@@ -1,5 +1,6 @@
 // @method-static
 function observer(target, options = {}) {
+   log('OBSERVER')
    target = n.helper.type(target, 'string') ? d.querySelectorAll(target) : n.helper.type(target, 'html') ? [target] : n.helper.type(target, 'sunQuery') ? target.get() : null;
 
    // log(target, options)

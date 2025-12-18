@@ -376,6 +376,8 @@
          }
       };
 
+      const warn = console.warn;
+
 
       class EventBase extends EventTarget {
          constructor() { super() };
@@ -2651,6 +2653,63 @@ remove() {
    });
    return this;
 },
+load(url, options) {
+   if (!url) return this;
+   // Pisahkan URL dan selector fragment
+   let [requestUrl, selector] = url.split(/\s+(.*)/s);
+   const target = this;
+   q.ajax({
+      url: requestUrl,
+      method: options?.data ? 'POST' : 'GET',
+      data: options?.data || {},
+      success: function (res) {
+         let html = res;
+
+         // Jalankan callback sebelum render
+         if (typeof options?.onResults === 'function') {
+            html = options.onResults(html) || html;
+         };
+
+         if (q.helper.type(html, "stringHtml")) {
+            html = q.helper.toHTML(html);
+         }
+
+         if (selector) {
+            const tmp = document.createElement('div');
+            if (n.helper.type(html, "array")) {
+               tmp.append(...html);
+            } else if (typeof html === "string") {
+               tmp.innerHTML = html;
+            }
+            html = tmp.querySelectorAll(selector);
+         }
+
+         // Render ke elemen target
+         target.forEach(el => {
+            el.innerHTML = '';
+            if (selector) {
+               html.forEach(node => el.append(node.cloneNode(true)));
+            } else {
+               if (n.helper.type(html, "array")) {
+                  el.append(...html);
+               } else if (typeof html === "string") {
+                  el.innerHTML = html;
+               }
+            }
+         });
+
+         if (typeof options?.status === 'function') options.status({
+            status: this.status,
+            statusText: this.statusText
+         });
+      },
+      error: function (err) {
+         if (typeof options?.status === 'function') options.status(err);
+      }
+   });
+
+   return this;
+},
 select(attr) {
    return this.forEach(select => {
       n.helper.expando.set(select, 'attribute', { ...attr, cache: new Map(), lastRequest: null });
@@ -3666,7 +3725,7 @@ Date(...args) {
       // ...existing code...
    };
 },
-loader(options) {
+loader_old(options) {
    // sunQuery,html,string
    options = { ...n.loader._global_config, ...options };
    let target;
@@ -3691,12 +3750,44 @@ loader(options) {
    n(wrap).css("z-index", n.face.index());
    return wrap;
 },
+loader(options) {
+   // sunQuery,html,string
+   options = { ...n.loader._global_config, ...options };
+   let target;
+   if (n.helper.type(options?.target, 'string')) {
+      target = d.querySelector(options?.target);
+   } else if (n.helper.type(options?.target, 'html')) {
+      target = options?.target;
+   } else if (n.helper.type(options?.target, 'sunQuery')) {
+      target = options?.target[0];
+   } else {
+      console.error(`[loader] target '${options?.target}' not found on page`);
+      return;
+   }
+   const id = n.helper.generateUniqueId(5);
+   const wrap = n.createElement('div', { class: 'loader', id: id });
+   const logo = options?.logo ?
+      n.createElement('img', { alt: 'logo', src: 'assets/img/logo.png' }) :
+      n.createElement('span', { text: 'loading...' });
+   const dot = n.createElement('div', { class: 'loader-dots', html: `<span></span><span></span><span></span>` });
+
+   wrap.append(logo, dot);
+   n(target).append(wrap);
+   n(wrap).css("z-index", n.face.index());
+   return wrap;
+},
 modal(options) {
-   const
-      attr = {
-         title: typeof options?.title === 'string' && options.title,
-         bar: null,
+   options = {
+      header: null,
+      dismiss: {
+         esc: true,
+         backdrop: true
       },
+      ...options
+   };
+
+   const
+      removeDismiss = (str) => str.replace(/\bdismiss(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'<>]+))?/ig, "").replace(/\s+/g, " ").trim(),
       action_close = function (modal, backdrop) {
          n(modal).animate({
             transform: ['translateY(0%)', 'translateY(-5%)'],
@@ -3705,46 +3796,88 @@ modal(options) {
             this.release();
             n(backdrop).animate({ opacity: [1, 0] }, 100).done(() => backdrop.remove())
          });
-      };
-   if (attr.title) {
-      attr.bar = n.createElement('div', {
-         class: 'overlay-bar',
-         html: `<span>${attr.title}</span>`
-      })
-   };
-
-   n.layerManager.define("modal", {
-      source: options?.source,
-      overlay: {
-         backdrop: true,
-         matchWidth: false,
-         attached: false,
-         content: options?.content
       },
-      connected: function (ev) {
-         const overlay = ev.context;
-         const backdrop = overlay.parentElement;
-         if (ev.type === 'init') {
-            overlay.classList.add("modal");
-            overlay.classList.add(n.helper.normalizeSize(options?.size));
-            attr.bar && overlay.insertAdjacentElement('afterbegin', attr.bar);
-            backdrop.addEventListener('click', ({ target }) => {
-               if (target.matches('.backdrop')) {
-                  n(overlay).animate([{ transform: "scale(1)" }, { transform: "scale(1.02)" }, { transform: "scale(0.97)" }, { transform: "scale(1)" }], { duration: 400, easing: "ease-in-out" });
-                  return;
+      render = function (attr) {
+         attr.content = n.createElement('div', { class: 'body', html: attr.content });
+         attr.content.querySelectorAll('.body').forEach(child => child.classList.remove('body'));
+
+         n.layerManager.define("modal", {
+            source: attr?.source,
+            overlay: {
+               backdrop: true,
+               matchWidth: false,
+               attached: false,
+               content: attr.content
+            },
+            connected: function (ev) {
+               const overlay = ev.context;
+               const backdrop = overlay.parentElement;
+               if (ev.type === 'init') {
+                  overlay.classList.add("modal");
+                  overlay.classList.add(n.helper.normalizeSize(attr?.size));
+                  attr.header && overlay.insertAdjacentElement('afterbegin', attr.header);
+                  backdrop.addEventListener('click', ({ target }) => {
+                     if (target.matches('.backdrop')) {
+                        n(overlay).animate([{ transform: "scale(1)" }, { transform: "scale(1.02)" }, { transform: "scale(0.97)" }, { transform: "scale(1)" }], { duration: 400, easing: "ease-in-out" });
+                        return;
+                     };
+                     if (target.closest('[dismiss="modal"]')) {
+                        action_close.call(this, overlay, backdrop)
+                     }
+                  })
                };
-               if (target.closest('[dismiss="modal"]')) {
+               if (ev.type === "escape") {
                   action_close.call(this, overlay, backdrop)
-               }
-            })
-         };
-         if (ev.type === "escape") {
-            action_close.call(this, overlay, backdrop)
-         };
+               };
+            }
+         });
       }
-   });
+
+   if (options?.header) {
+      let title = options?.header?.title;
+      let close = options?.header?.close;
+      if (typeof title === 'string') {
+         title = removeDismiss(title)?.trim();
+         title = `<span class="modal-title">${title}</span>`
+      } else {
+         title = undefined;
+      };
+
+      if (title) {
+         if (close != false) {
+            title += `<div class="toolbar"><button class="btn-icon btn-danger" dismiss="modal"><i class="ph ph-x"></i></buton></div>`;
+         }
+         options.header = n.createElement('div', {
+            class: 'header',
+            html: title
+         });
+         title = options.header.querySelector('.modal-title');
+         title.removeAttribute('dismiss');
+      }
+
+   }
+
+   let content = options?.content;
+   if (n.helper.isURL(content)) {
+      n.ajax({
+         url: content,
+         success: function (data) {
+            content = data;
+            render({ ...options, content });
+         },
+         error: function (err) {
+            console.error(`[🖥️Modal] Ajax Request : ${err}`);
+         }
+      });
+   } else {
+      render(options);
+   }
+
+
+
 },
 observer(target, options = {}) {
+   log('OBSERVER')
    target = n.helper.type(target, 'string') ? d.querySelectorAll(target) : n.helper.type(target, 'html') ? [target] : n.helper.type(target, 'sunQuery') ? target.get() : null;
 
    // log(target, options)

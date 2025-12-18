@@ -19,400 +19,50 @@
     <link rel="stylesheet" href="assets/dist/sunquery.css" />
     <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
     <script src="assets/js/chart.js"></script>
+    <script src="assets/dist/sunquery.js"></script>
   </head>
   <body>
-    <header>
-      <div class="logo">
-        <img src="assets/img/logo.png" alt="" />
-      </div>
-      <div class="nav-button flex gap-20">
-        <button class="btn-icon"><i class="ph ph-sun"></i></button>
-        <button class="btn btn-primary">Sign</button>
-      </div>
-    </header>
-    <main>
-      <!-- Dashboard Section -->
-      <section>
-        <!-- <h1 class="section-title">Dashboard Desa XYZ</h1>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="ph ph-users"></i>
-            </div>
-            <div class="stat-content">
-              <h3>Data Penduduk</h3>
-              <div class="stat-number">12,500</div>
-              <p>Jumlah total penduduk</p>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="ph ph-chart-line"></i>
-            </div>
-            <div class="stat-content">
-              <h3>Anggaran</h3>
-              <div class="stat-number">Rp 2.5M</div>
-              <p>Anggaran desa 2025</p>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="ph ph-money"></i>
-            </div>
-            <div class="stat-content">
-              <h3>PBB</h3>
-              <div class="stat-number">Rp 850K</div>
-              <p>Pajak bumi bangunan</p>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="ph ph-office-chair"></i>
-            </div>
-            <div class="stat-content">
-              <h3>Aparatur</h3>
-              <div class="stat-number">15</div>
-              <p>Staf & pejabat desa</p>
-            </div>
-          </div>
-        </div> -->
-        <div class="head">
-          <h1 class="center">Data & Statistik Desa</h1>
-        </div>
-        <div class="body">
-          <!-- Charts Section -->
-          <div class="card">
-            <h3>Distribusi Penduduk</h3>
-            <canvas id="populationChart"></canvas>
-          </div>
-          <div class="card">
-            <h3>Anggaran Desa</h3>
-            <canvas id="budgetChart"></canvas>
-          </div>
-          <div class="card">
-            <h3>Pajak PBB</h3>
-            <canvas id="chartPBB"></canvas>
-          </div>
-
-          <div class="card">
-            <h3>Aparatur</h3>
-            <canvas id="chartAparatur"></canvas>
-          </div>
-        </div>
-      </section>
-
-      <!-- Agenda Section -->
-      <!-- <section class="agenda-section">
-        <h2 class="section-title">Agenda & Acara</h2>
-        <div class="agenda-timeline">
-          <div class="timeline-item active">
-            <div class="timeline-marker">
-              <i class="ph ph-syringe"></i>
-            </div>
-            <div class="timeline-content">
-              <div class="timeline-date">Sedang Berlangsung</div>
-              <h4>Vaksinasi COVID-19</h4>
-              <p>
-                Program vaksinasi massal di Balai Desa dengan target 500 warga
-                per hari.
-              </p>
-              <span class="status-badge active">Aktif</span>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-marker">
-              <i class="ph ph-users"></i>
-            </div>
-            <div class="timeline-content">
-              <div class="timeline-date">15 Des 2025</div>
-              <h4>Rapat Musyawarah</h4>
-              <p>
-                Diskusi anggaran tahun 2026 dengan melibatkan seluruh
-                stakeholder desa.
-              </p>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-marker">
-              <i class="ph ph-heart"></i>
-            </div>
-            <div class="timeline-content">
-              <div class="timeline-date">20 Des 2025</div>
-              <h4>Posyandu Bulanan</h4>
-              <p>
-                Pemeriksaan kesehatan balita & lansia dengan penyuluhan gizi.
-              </p>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-marker">
-              <i class="ph ph-music-note"></i>
-            </div>
-            <div class="timeline-content">
-              <div class="timeline-date">25 Des 2025</div>
-              <h4>Festival Desa</h4>
-              <p>
-                Perayaan akhir tahun dengan berbagai kegiatan budaya dan
-                hiburan.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section> -->
-    </main>
-    <footer>
-      <p>&copy; 2025 PT.SUN Solutions Corp. All rights reserved.</p>
-    </footer>
+    <header></header>
+    <main></main>
+    <footer></footer>
   </body>
-
-  <script src="assets/dist/sunquery.js"></script>
+  <script src="assets/dist/main.js"></script>
   <script>
-    // Generate animated background
-    function enerateBackground() {
-      const canvas = q.createElement("canvas", { class: "bg-sky" });
-      q("body").append(canvas, "afterbegin");
-
-      const earth = q.createElement("div", {
-        class: "background-earth-wrap",
-        html: `<div class="earth"></div>`,
-      });
-      q(canvas).append(earth, "afterend");
-      const ctx = canvas.getContext("2d");
-
-      const resize = function () {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      };
-
-      resize();
-
-      let stars = [],
-        mouseX,
-        mouseY,
-        shootingStar = { x: -100, y: 0, vx: 0, vy: 0, active: false };
-
-      // Generate Stars
-      for (let i = 0; i < 500; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          radius: Math.random() * 1.7,
-          alpha: Math.random(),
-          speed: Math.random() * 0.02 + 0.005,
-        });
-      }
-
-      function drawStars() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "white";
-
-        stars.forEach((star) => {
-          // Twinkle
-          star.alpha += star.speed * (Math.random() < 0.5 ? -1 : 1);
-          if (star.alpha < 0.1) star.alpha = 0.1;
-          if (star.alpha > 1) star.alpha = 1;
-
-          // Mouse interaction
-          if (mouseX !== null && mouseY !== null) {
-            let dx = star.x - mouseX;
-            let dy = star.y - mouseY;
-            let dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 120) {
-              let angle = Math.atan2(dy, dx);
-              star.x += Math.cos(angle) * 0.5;
-              star.y += Math.sin(angle) * 0.5;
+    const observer = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        if (m.type !== "childList") continue;
+        m.addedNodes.forEach((node) => {
+          if (node.nodeType !== 1) return; // hanya elemen
+          node.querySelectorAll(".form-group input").forEach((input) => {
+            const formGroup = input.closest(".form-group");
+            if (!formGroup) return;
+            // hindari double event listener
+            if (q.helper.expando.get(input, "obs")) {
+              return;
             }
-          }
+            q.helper.expando.set(input, "obs", true);
 
-          ctx.globalAlpha = star.alpha;
-          ctx.beginPath();
-          ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-          ctx.fill();
+            // set awal jika input sudah ada value
+            if (input.value.trim() !== "") {
+              formGroup.classList.add("focused");
+            }
+            // event focus / blur
+            input.addEventListener("focus", () => {
+              formGroup.classList.add("focused");
+            });
+            input.addEventListener("blur", () => {
+              if (input.value.trim() === "") {
+                formGroup.classList.remove("focused");
+              }
+            });
+          });
         });
-
-        // Shooting star logic
-        if (!shootingStar.active && Math.random() < 0.002) {
-          shootingStar.x = Math.random() * canvas.width;
-          shootingStar.y = 0;
-          shootingStar.vx = -4 - Math.random() * 2;
-          shootingStar.vy = 4 + Math.random() * 2;
-          shootingStar.active = true;
-        }
-        if (shootingStar.active) {
-          ctx.globalAlpha = 1;
-          ctx.strokeStyle = "#fff";
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(shootingStar.x, shootingStar.y);
-          ctx.lineTo(shootingStar.x + 10, shootingStar.y - 10);
-          ctx.stroke();
-          shootingStar.x += shootingStar.vx;
-          shootingStar.y += shootingStar.vy;
-          if (shootingStar.y > canvas.height) shootingStar.active = false;
-        }
-
-        requestAnimationFrame(drawStars);
       }
-      drawStars();
-      window.addEventListener("resize", resize);
-      window.addEventListener("mousemove", (ev) => {
-        mouseX = ev.clientX;
-        mouseY = ev.clientY;
-      });
-    }
-
-    enerateBackground();
-
-    // Initialize Charts
-    const populationData = {
-      labels: ["0-17 tahun", "18-35 tahun", "36-55 tahun", "56+ tahun"],
-      datasets: [
-        {
-          label: "Jumlah Penduduk",
-          data: [3125, 4375, 3125, 1875],
-          backgroundColor: ["#6366f1", "#10b981", "#f59e0b", "#ef4444"],
-          borderWidth: 0,
-        },
-      ],
-    };
-
-    const budgetData = {
-      labels: ["Pemasukan", "Pengeluaran"],
-      datasets: [
-        {
-          label: "Anggaran (Rp Juta)",
-          data: [2500, 2250],
-          backgroundColor: ["#10b981", "#ef4444"],
-          borderWidth: 0,
-        },
-      ],
-    };
-
-    const dataPBB = {
-      labels: ["2020", "2021", "2022", "2023", "2024"],
-      datasets: [
-        {
-          label: "Pajak PBB (Rp Juta)",
-          data: [50, 55, 60, 58, 62],
-          borderColor: "#9b59b6",
-          fill: false,
-        },
-      ],
-    };
-
-    const dataAparatur = {
-      labels: ["Kepala Desa", "Sekretaris", "Kaur", "Kadus", "BPD"],
-      datasets: [
-        {
-          label: "Jumlah Aparatur",
-          data: [1, 1, 3, 5, 7],
-          backgroundColor: "#34495e",
-        },
-      ],
-    };
-
-    const chartOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: false,
-        },
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          grid: {
-            color: "rgba(255,255,255,0.1)",
-          },
-          ticks: {
-            color: "#a3a8ad",
-          },
-        },
-        x: {
-          grid: {
-            color: "rgba(255,255,255,0.1)",
-          },
-          ticks: {
-            color: "#a3a8ad",
-          },
-        },
-      },
-    };
-
-    new Chart(document.getElementById("populationChart"), {
-      type: "doughnut",
-      data: populationData,
-      options: {
-        ...chartOptions,
-        plugins: {
-          legend: {
-            position: "bottom",
-            labels: {
-              color: "#a3a8ad",
-              padding: 20,
-              usePointStyle: true,
-            },
-          },
-        },
-      },
     });
 
-    new Chart(document.getElementById("budgetChart"), {
-      type: "bar",
-      data: budgetData,
-      options: chartOptions,
-    });
-
-    new Chart(document.getElementById("chartPBB"), {
-      type: "line",
-      data: dataPBB,
-      options: chartOptions,
-    });
-
-    new Chart(document.getElementById("chartAparatur"), {
-      type: "bar",
-      data: dataAparatur,
-      options: chartOptions,
-    });
-
-    // Dark mode toggle
-    const themeToggle = document.querySelector(".btn-icon");
-    const body = document.body;
-
-    themeToggle.addEventListener("click", function () {
-      const currentTheme = body.getAttribute("data-theme") || "light";
-      const newTheme = currentTheme === "light" ? "dark" : "light";
-
-      body.setAttribute("data-theme", newTheme);
-      localStorage.setItem("theme", newTheme);
-
-      const icon = themeToggle.querySelector("i");
-      icon.className = newTheme === "dark" ? "ph ph-moon" : "ph ph-sun";
-    });
-
-    // Load saved theme
-    const savedTheme = localStorage.getItem("theme") || "light";
-    body.setAttribute("data-theme", savedTheme);
-    const icon = themeToggle.querySelector("i");
-    icon.className = savedTheme === "dark" ? "ph ph-moon" : "ph ph-sun";
-
-    // Modal functionality for Sign button
-    const signBtn = document.querySelector(".btn-primary");
-    signBtn.addEventListener("click", function () {
-      // Create modal
-      console.log("MODAL", this);
-      q.modal({
-        source: this, // element pemicu
-        content: "form-login.html", //url | string | html | stringHtml
-        size: "md",
-      });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
     });
   </script>
 </html>

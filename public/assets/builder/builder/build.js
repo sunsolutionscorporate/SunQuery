@@ -4,6 +4,7 @@ const { spawn } = require('child_process');
 
 const srcCSSDir = path.join(__dirname, '..', 'src', 'css');
 const srcJSDir = path.join(__dirname, '..', 'src', 'sunquery');
+const srcScryiptDir = path.join(__dirname, '..', 'src', 'script');
 
 function buildCSS() {
    return new Promise((resolve, reject) => {
@@ -25,9 +26,19 @@ function buildJS() {
    });
 }
 
+function buildScript() {
+   return new Promise((resolve, reject) => {
+      const child = spawn('node', ['builder/build-script.js'], { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
+      child.on('close', (code) => {
+         if (code === 0) resolve();
+         else reject(new Error('JS build failed'));
+      });
+   });
+}
+
 async function buildAll() {
    try {
-      await Promise.all([buildCSS(), buildJS()]);
+      await Promise.all([buildCSS(), buildJS(), buildScript()]);
       console.log('All builds completed successfully');
    } catch (error) {
       console.error('Build failed:', error.message);
@@ -40,7 +51,7 @@ if (watch) {
    console.log('Starting watch mode...');
    buildAll();
 
-   chokidar.watch([srcCSSDir, srcJSDir], { ignoreInitial: true }).on('all', (event, filePath) => {
+   chokidar.watch([srcCSSDir, srcJSDir, srcScryiptDir], { ignoreInitial: true }).on('all', (event, filePath) => {
       console.log(`File ${event}: ${filePath}`);
       buildAll();
    });

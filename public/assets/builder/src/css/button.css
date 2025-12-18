@@ -33,6 +33,10 @@
   padding: 2px;
   font-size: 1.2em;
 }
+.btn-icon > i,
+.btn.btn-icon > i {
+  font-size: 1.5rem;
+}
 
 .btn::before {
   content: "";
@@ -78,6 +82,41 @@
   background: linear-gradient(135deg, var(--danger-color) 0%, #4565f7ce 100%);
   color: white;
   border: none;
+}
+
+.toolbar {
+  position: relative;
+  display: flex;
+  gap: 5px;
+}
+.toolbar .btn-icon {
+  /* padding: 0 0.4rem; */
+  line-height: 1;
+  font-size: 1rem;
+  transition: unset;
+  box-shadow: unset;
+}
+.toolbar .btn-icon i {
+  transition: 0.25s ease-in-out;
+}
+
+.toolbar .btn-icon:hover i {
+  transform: scale(1.1);
+}
+
+.btn-icon.btn-primary {
+  color: var(--primary-color);
+}
+
+.btn-icon.btn-success {
+  color: var(--success-color);
+}
+
+.btn-icon.btn-warning {
+  color: var(--warning-color);
+}
+.btn-icon.btn-danger {
+  color: var(--danger-color);
 }
 
 .btn.btn-flat {

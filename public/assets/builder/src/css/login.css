@@ -1,0 +1,78 @@
+/* .login {
+  border-radius: var(--radius);
+  padding: 1rem 2rem;
+  max-width: 22rem;
+  width: 100%;
+  margin-inline: auto;
+  border: 1px solid #ffffff27;
+  background: #011116f6;
+}
+@media (max-width: 640px) {
+  .login {
+    margin-inline: 0;
+    max-width: 100%;
+  }
+} */
+
+.login {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 2rem;
+  height: 100%;
+  width: 100%;
+}
+
+.login > section {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 22rem;
+
+  padding: 0 2rem;
+  border-radius: var(--radius);
+  border: 1px solid #ffffff27;
+  background: #011116f6;
+}
+
+.login input {
+  border-radius: 30px;
+  height: 40px;
+}
+
+.login .login-action {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login .btn {
+  border-radius: 30px;
+  height: 40px;
+}
+
+.login .login-action .sparator {
+  position: relative;
+  display: block;
+  text-align: center;
+}
+
+.login .login-action .sparator::before,
+.login .login-action .sparator::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: calc(50% - 1rem);
+  height: 1px;
+  background: #ffffff50;
+  transform: translateY(-50%);
+}
+.login .login-action .sparator::before {
+  left: 0;
+}
+.login .login-action .sparator::after {
+  right: 0;
+}

@@ -458,3 +458,64 @@ function remove() {
    });
    return this;
 };
+
+
+function load(url, options) {
+   if (!url) return this;
+   // Pisahkan URL dan selector fragment
+   let [requestUrl, selector] = url.split(/\s+(.*)/s);
+   const target = this;
+   q.ajax({
+      url: requestUrl,
+      method: options?.data ? 'POST' : 'GET',
+      data: options?.data || {},
+      success: function (res) {
+         let html = res;
+
+         // Jalankan callback sebelum render
+         if (typeof options?.onResults === 'function') {
+            html = options.onResults(html) || html;
+         };
+
+         if (q.helper.type(html, "stringHtml")) {
+            html = q.helper.toHTML(html);
+         }
+
+         if (selector) {
+            const tmp = document.createElement('div');
+            if (n.helper.type(html, "array")) {
+               tmp.append(...html);
+            } else if (typeof html === "string") {
+               tmp.innerHTML = html;
+            }
+            html = tmp.querySelectorAll(selector);
+         }
+
+         // Render ke elemen target
+         target.forEach(el => {
+            el.innerHTML = '';
+            if (selector) {
+               html.forEach(node => el.append(node.cloneNode(true)));
+            } else {
+               if (n.helper.type(html, "array")) {
+                  el.append(...html);
+               } else if (typeof html === "string") {
+                  el.innerHTML = html;
+               }
+            }
+         });
+
+         if (typeof options?.status === 'function') options.status({
+            status: this.status,
+            statusText: this.statusText
+         });
+      },
+      error: function (err) {
+         if (typeof options?.status === 'function') options.status(err);
+      }
+   });
+
+   return this;
+};
+
+
