@@ -25,6 +25,15 @@ body {
 }
 
 body {
+  --gap: 1rem;
+  --py: 1.2rem;
+  --head: 2.5rem;
+  --foot: 2.5rem;
+  --main-h: calc(
+    100svh - var(--head) - var(--foot) - calc(var(--py) * 2) -
+      calc(var(--gap) * 2)
+  );
+
   background: linear-gradient(180deg, #071026 0%, #041223 70%);
   color: #a3a8ad;
 
@@ -35,9 +44,9 @@ body {
   display: grid;
   margin: 0;
 
-  grid-template-rows: 2.5rem 1fr 2.5rem;
-  gap: 1rem;
-  padding: 1.2rem 2rem;
+  grid-template-rows: var(--head) var(--main-h) var(--foot);
+  gap: var(--gap);
+  padding: var(--py) 2rem;
 }
 
 header {
@@ -68,9 +77,9 @@ header .logo {
 
 main {
   position: relative;
-  overflow-x: hidden;
   padding-right: 5px;
-  /* height: 100%; */
+  max-height: var(--main-h);
+  overflow-y: auto;
 }
 
 /* Chrome, Edge, Safari, Opera */

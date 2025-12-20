@@ -8,4 +8,5 @@ node_modules/
 .docker/
 .vscode/
 testing/
+icons/
 docker-compose.override.yml

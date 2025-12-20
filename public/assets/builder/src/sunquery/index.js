@@ -377,6 +377,8 @@
       };
 
       const warn = console.warn;
+      let fontSize;
+      const stack_fz = [];
 
 
       class EventBase extends EventTarget {
@@ -765,12 +767,14 @@
                const cfg = await n.getConfig()
                async function router() {
                   const path_url = { controller_name: null, path: '/', params: {}, segments: [] };
-                  function wrt() {
+                  function wrt(data) {
+                     // log('WRT', data)
                      const hash = location.hash.replace(/^#\/?/, '') || '/';
                      const [pathPart, queryPart] = hash.split('?');
                      path_url.path = pathPart;
                      path_url.segments = pathPart.split('/').filter(Boolean);
                      path_url.params = {};
+                     path_url.data = data || {};
                      if (queryPart) {
                         for (const [k, v] of new URLSearchParams(queryPart)) path_url.params[k] = v;
                      };
@@ -778,15 +782,11 @@
                      // n.EventCustom('routes', { ...path_url }).target(n);
                   };
                   function setHash(hash) {
-                     wrt();
+                     wrt(hash?.detail);
                      n.EventCustom('routes', { ...path_url }).target(n);
                   }
                   window.addEventListener("hashchange", setHash);
-                  // await new Promise((resolve) => setTimeout(resolve, 50));
-                  // log('ROUTER')
-                  // n.addEventListener('afterinit', async function () {
-                  //    wrt();
-                  // });
+
                   n.router = new function () {
                      this.path = () => path_url.path;
                      this.segments = () => path_url.segments;
@@ -941,6 +941,22 @@
                   });
                };
                cfg.router && router();
+
+
+               // perubahan fontSize pada root document
+               const root = document.documentElement;
+               fontSize = parseFloat(getComputedStyle(root).fontSize);
+               const ro = new ResizeObserver(() => {
+                  const current = parseFloat(getComputedStyle(root).fontSize);
+                  if (current !== fontSize) {
+                     fontSize = current;
+                     // console.log('font-size root berubah:', current);
+                     // stack_fz.forEach(fn => fn(current));
+                  }
+                  stack_fz.forEach(fn => fn(current));
+               });
+
+               ro.observe(root);
             }();
             // jalankan config auto, jika user tidak melakukan config;
             d.readyState === "loading" && d.addEventListener("DOMContentLoaded", () => n.config({ __std__: true }), { once: true });
@@ -1347,6 +1363,16 @@
                if (b.length == 1) b = "0" + b;
                return "#" + r + g + b;
             };
+         },
+         location: function (hash, data) {
+            const event = new CustomEvent("hashchange", {
+               detail: data,
+               bubbles: true,
+               cancelable: true
+            });
+            history.replaceState(null, "", "#" + hash);
+
+            window.dispatchEvent(event);
          },
 
          LEFT: Symbol('left'),

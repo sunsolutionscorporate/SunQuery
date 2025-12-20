@@ -48,6 +48,7 @@ function ajax(options = {}) {
    };
    const json_parse = function (strJson) {
       try {
+         if (!strJson) return strJson;
          return JSON.parse(strJson);
       } catch (err) {
          log.error(`[ajax] json_parse error`, err);
@@ -58,13 +59,13 @@ function ajax(options = {}) {
       if (!errorFired) {
          errorFired = true;
          const res = json_parse(xhr.responseText);
-         if (res) {
-            if (status) { res.status = status }
-            result.status = xhr.status;
-            result.statusText = xhr.statusText;
-            fail_cb.forEach((cb) => cb.call(result, res));
-            always_cb.forEach((cb) => cb.call(result, res));
-         }
+         // if (res) {
+         if (status) { res.status = status }
+         result.status = xhr.status;
+         result.statusText = xhr.statusText;
+         fail_cb.forEach((cb) => cb.call(result, res));
+         always_cb.forEach((cb) => cb.call(result, res));
+         // }
       }
    };
    if (method === 'GET') {
@@ -99,6 +100,7 @@ function ajax(options = {}) {
             result.status = xhr.status;
             result.statusText = xhr.statusText;
             done_cb.forEach(cb => cb.call(result, response));
+            always_cb.forEach((cb) => cb.call(result, response));
          } else {
             fireFail();
          }

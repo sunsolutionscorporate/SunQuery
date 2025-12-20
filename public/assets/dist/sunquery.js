@@ -377,6 +377,8 @@
       };
 
       const warn = console.warn;
+      let fontSize;
+      const stack_fz = [];
 
 
       class EventBase extends EventTarget {
@@ -765,12 +767,14 @@
                const cfg = await n.getConfig()
                async function router() {
                   const path_url = { controller_name: null, path: '/', params: {}, segments: [] };
-                  function wrt() {
+                  function wrt(data) {
+                     // log('WRT', data)
                      const hash = location.hash.replace(/^#\/?/, '') || '/';
                      const [pathPart, queryPart] = hash.split('?');
                      path_url.path = pathPart;
                      path_url.segments = pathPart.split('/').filter(Boolean);
                      path_url.params = {};
+                     path_url.data = data || {};
                      if (queryPart) {
                         for (const [k, v] of new URLSearchParams(queryPart)) path_url.params[k] = v;
                      };
@@ -778,15 +782,11 @@
                      // n.EventCustom('routes', { ...path_url }).target(n);
                   };
                   function setHash(hash) {
-                     wrt();
+                     wrt(hash?.detail);
                      n.EventCustom('routes', { ...path_url }).target(n);
                   }
                   window.addEventListener("hashchange", setHash);
-                  // await new Promise((resolve) => setTimeout(resolve, 50));
-                  // log('ROUTER')
-                  // n.addEventListener('afterinit', async function () {
-                  //    wrt();
-                  // });
+
                   n.router = new function () {
                      this.path = () => path_url.path;
                      this.segments = () => path_url.segments;
@@ -941,6 +941,22 @@
                   });
                };
                cfg.router && router();
+
+
+               // perubahan fontSize pada root document
+               const root = document.documentElement;
+               fontSize = parseFloat(getComputedStyle(root).fontSize);
+               const ro = new ResizeObserver(() => {
+                  const current = parseFloat(getComputedStyle(root).fontSize);
+                  if (current !== fontSize) {
+                     fontSize = current;
+                     // console.log('font-size root berubah:', current);
+                     // stack_fz.forEach(fn => fn(current));
+                  }
+                  stack_fz.forEach(fn => fn(current));
+               });
+
+               ro.observe(root);
             }();
             // jalankan config auto, jika user tidak melakukan config;
             d.readyState === "loading" && d.addEventListener("DOMContentLoaded", () => n.config({ __std__: true }), { once: true });
@@ -1347,6 +1363,16 @@
                if (b.length == 1) b = "0" + b;
                return "#" + r + g + b;
             };
+         },
+         location: function (hash, data) {
+            const event = new CustomEvent("hashchange", {
+               detail: data,
+               bubbles: true,
+               cancelable: true
+            });
+            history.replaceState(null, "", "#" + hash);
+
+            window.dispatchEvent(event);
          },
 
          LEFT: Symbol('left'),
@@ -2531,11 +2557,22 @@ prop(name, value) {
    /*.prop("checked"), .prop("disabled")	Akses properti JavaScript DOM langsung*/
    if (typeof name === "string" && typeof value === "undefined") {
       const el = this[0];
+      if (name.startsWith('--')) return window.getComputedStyle(el).getPropertyValue(name).trim();
       return el ? el[name] : undefined;
    } else if (typeof name === "string") {
+      if (name.startsWith('--')) {
+         this.forEach((el) => (el.style.setProperty(name, value)));
+         return this;
+      }
       this.forEach((el) => (el[name] = value));
    } else if (typeof name === "object" && name !== null) {
       /*Setter multiple prop via object*/
+      if (name.startsWith('--')) {
+         this.forEach((el) => {
+            for (let key in name) el.style.setProperty(key, name[key]);
+         });
+         return this;
+      }
       this.forEach((el) => {
          for (let key in name) el[key] = name[key];
       });
@@ -3269,6 +3306,13 @@ debounce(fn, delay) {
       timer = setTimeout(() => fn.apply(this, args), delay);
    };
 },
+fontSize(callback) {
+   if (typeof callback == 'function') {
+      callback(fontSize);
+      stack_fz.push(callback);
+   }
+   return fontSize;
+},
 ajax(options = {}) {
    if (!n.helper.isURL(options?.url)) {
       log.error(`[ajax] parameter 'url' accepts only type 'string'`);
@@ -3318,6 +3362,7 @@ ajax(options = {}) {
    };
    const json_parse = function (strJson) {
       try {
+         if (!strJson) return strJson;
          return JSON.parse(strJson);
       } catch (err) {
          log.error(`[ajax] json_parse error`, err);
@@ -3328,13 +3373,13 @@ ajax(options = {}) {
       if (!errorFired) {
          errorFired = true;
          const res = json_parse(xhr.responseText);
-         if (res) {
-            if (status) { res.status = status }
-            result.status = xhr.status;
-            result.statusText = xhr.statusText;
-            fail_cb.forEach((cb) => cb.call(result, res));
-            always_cb.forEach((cb) => cb.call(result, res));
-         }
+         // if (res) {
+         if (status) { res.status = status }
+         result.status = xhr.status;
+         result.statusText = xhr.statusText;
+         fail_cb.forEach((cb) => cb.call(result, res));
+         always_cb.forEach((cb) => cb.call(result, res));
+         // }
       }
    };
    if (method === 'GET') {
@@ -3369,6 +3414,7 @@ ajax(options = {}) {
             result.status = xhr.status;
             result.statusText = xhr.statusText;
             done_cb.forEach(cb => cb.call(result, response));
+            always_cb.forEach((cb) => cb.call(result, response));
          } else {
             fireFail();
          }
@@ -3767,7 +3813,7 @@ loader(options) {
    const id = n.helper.generateUniqueId(5);
    const wrap = n.createElement('div', { class: 'loader', id: id });
    const logo = options?.logo ?
-      n.createElement('img', { alt: 'logo', src: 'assets/img/logo.png' }) :
+      n.createElement('img', { alt: 'logo', src: options.logo }) :
       n.createElement('span', { text: 'loading...' });
    const dot = n.createElement('div', { class: 'loader-dots', html: `<span></span><span></span><span></span>` });
 
@@ -3877,7 +3923,6 @@ modal(options) {
 
 },
 observer(target, options = {}) {
-   log('OBSERVER')
    target = n.helper.type(target, 'string') ? d.querySelectorAll(target) : n.helper.type(target, 'html') ? [target] : n.helper.type(target, 'sunQuery') ? target.get() : null;
 
    // log(target, options)

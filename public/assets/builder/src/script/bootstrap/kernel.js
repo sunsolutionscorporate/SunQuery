@@ -1,57 +1,46 @@
-function Kernel() {
+
+function Kernel(options) {
+   if (!options?.host) {
+      throw new Error("[Kernel] Host not defined");
+   };
+   options.host = options?.host?.replace(/^\/|\/$/g, "") + "/";//hilangkan '/' awal dan akhir
    this.version = '1.0.0';
+   this.UI = new UI();
+   this.host = options.host;
+   const router = new View();
    const instance = this;
-   const b = document.body;
-   const d = document;
-   const vwSections = {
-      'header': 'header.html',
-      'main': 'form-login.html',
-      'footer': 'footer.html'
-   };
-   const pageRender = async (callback) => {
-      const promises = [];
 
-      for (const key in vwSections) {
-         // Buat promise untuk setiap load
-         const p = new Promise((resolve, reject) => {
-            setTimeout(() => {//timer hanya untuk simulaso loading testing
-               q(key).load(vwSections[key], {
-                  status: function (res) {
-                     if (res.statusText === 'OK') {
-                        resolve();
-                     } else {
-                        reject(res);
-                     }
-                  }
-               });
-            }, 500)
-         });
-
-         promises.push(p);
-      }
-
-      try {
-         // Tunggu semua load selesai
-         await Promise.all(promises);
-         // Semua selesai, panggil callback
-         if (typeof callback === 'function') callback();
-      } catch (err) {
-         console.error('Gagal load salah satu section:', err);
-      }
-   };
+   instance.utils = { src: null, api_url: options?.api };
 
    //////////////////////////////////
    ////////// PRIVATE METHOD ////////
    //////////////////////////////////
 
+   q.config({ observer: true, formCostum: true, router: true, platform: true, ...options });
+   n.ready(async function () {
+      // render background canvas
+      Kernel.background();
+      // 
+      instance.utils = { ...await n.getConfig(), ...instance.utils };
 
 
-   n.loader({ target: b, logo: 'assets/img/logo.png' });
 
-   pageRender(function () {
-      // console.log('OKE')
-      n(b).stopLoader();
    });
-   // render background canvas
-   Kernel.background();
+
+   //////////////////////////////////
+   ////////// PUBLIC METHOD /////////
+   //////////////////////////////////
+   this.request = async function (url, options) {
+      url = url.replace(/^\/|\/$/g, "");//hilangkan '/' awal dan akhir
+      url = this.utils.host + '/' + url;
+      try {
+         return await n.ajax({ url: url, ...options });
+      } catch (error) {
+         console.error(`Request Error: "${url}"`, error);
+      }
+   };
+
+   this.view = function (view) {
+      router.define(view);
+   }
 };

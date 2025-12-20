@@ -28,9 +28,9 @@ async function buildScript() {
       // Define folder order
       const folders = [
          { name: 'ui', label: 'KODE BLOK UI' },
-         { name: 'pages', label: 'KODE BLOK PAGES' },
-         { name: 'letters', label: 'KODE BLOK LETTERS' },
-         { name: 'bootstrap', label: 'KODE BLOK KERNEL' }
+         { name: 'bootstrap', label: 'KODE BLOK KERNEL' },
+         // { name: 'pages', label: 'KODE BLOK PAGES' },
+         // { name: 'letters', label: 'KODE BLOK LETTERS' },
       ];
 
       // Build replacement content
@@ -43,11 +43,27 @@ async function buildScript() {
    //////////////////////////////////////////
 ${content}`;
       }
-      replacement += `
-   // kode penutup`;
-
+      replacement += `// @method-global`;
       // Replace the placeholder in base content
-      baseContent = baseContent.replace('   // kode penutup', replacement);
+      baseContent = baseContent.replace('   // @method-global', replacement);
+
+
+      const folders_extends = [
+         { name: 'pages', label: 'KODE BLOK PAGES' },
+         { name: 'letters', label: 'KODE BLOK LETTERS' },
+      ];
+      let replace_extended = '';
+      for (const folder of folders_extends) {
+         const content = readFolderScripts(folder.name);
+         replace_extended += `
+   //////////////////////////////////////////
+   ////////// ${folder.label} ////////////////
+   //////////////////////////////////////////
+${content}`;
+      }
+      replace_extended += `// @extended`;
+      // Replace the placeholder in base content
+      baseContent = baseContent.replace('   // @extended', replace_extended);
 
       // Ensure output directory exists
       await fs.ensureDir(outputDir);

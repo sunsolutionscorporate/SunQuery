@@ -336,11 +336,22 @@ function prop(name, value) {
    /*.prop("checked"), .prop("disabled")	Akses properti JavaScript DOM langsung*/
    if (typeof name === "string" && typeof value === "undefined") {
       const el = this[0];
+      if (name.startsWith('--')) return window.getComputedStyle(el).getPropertyValue(name).trim();
       return el ? el[name] : undefined;
    } else if (typeof name === "string") {
+      if (name.startsWith('--')) {
+         this.forEach((el) => (el.style.setProperty(name, value)));
+         return this;
+      }
       this.forEach((el) => (el[name] = value));
    } else if (typeof name === "object" && name !== null) {
       /*Setter multiple prop via object*/
+      if (name.startsWith('--')) {
+         this.forEach((el) => {
+            for (let key in name) el.style.setProperty(key, name[key]);
+         });
+         return this;
+      }
       this.forEach((el) => {
          for (let key in name) el[key] = name[key];
       });

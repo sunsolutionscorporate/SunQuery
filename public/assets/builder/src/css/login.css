@@ -37,6 +37,10 @@
   background: #011116f6;
 }
 
+.login > section > .body {
+  /* gap: 0; */
+}
+
 .login input {
   border-radius: 30px;
   height: 40px;
@@ -75,4 +79,31 @@
 }
 .login .login-action .sparator::after {
   right: 0;
+}
+
+.btn-google {
+  gap: 0.8rem;
+}
+.btn-google > img {
+  width: 20px;
+}
+
+.login p {
+  margin: 0;
+  padding: 0;
+}
+
+.form-otp {
+  margin: 30px 0;
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  gap: 5px;
+  align-items: center;
+}
+
+.form-otp > input {
+  border-radius: 1rem;
+  text-align: center;
 }

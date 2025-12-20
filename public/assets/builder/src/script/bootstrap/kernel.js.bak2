@@ -1,0 +1,197 @@
+function Kernel(options) {
+   this.version = '1.0.0';
+   const instance = this;
+   const d = document;
+   instance.utils = { src: null, api_url: options?.api };
+   const pageViews = {
+      header: null, main: null, footer: null
+   };
+   const render = function (html, target = pageViews.main) {
+      if (n.helper.type(html) === 'stringHtml') {
+         html = n.helper.toHTML(html);
+      } else if (n.helper.type(html) === 'html') {
+         html = [html];
+      } else if (n.helper.type(html) === 'array') {
+         html = html;
+      } else {
+         console.error('render error:', html);
+         return;
+      };
+      pageViews.main.innerHTML = '';
+      target.append(...html);
+      n(pageViews.main).animate({
+         opacity: [0, 1],
+      }, 300).done(() => {
+      })
+   };
+   const showLogin = function () {
+      const client = google.accounts.oauth2.initTokenClient({
+         client_id: '598543379687-1o9bsasf8sialvhb0j8llndbhjgbgl6u.apps.googleusercontent.com',
+         scope: 'email profile',
+         callback: (res) => {
+            // location.hash = ;
+            n.location('auth/google', { access_token: res.access_token })
+            // n.loader({
+            //    target: d.body,
+            //    logo: 'assets/images/logo.png'
+            // });
+            // n.ajax({
+            //    url: 'http://localhost/auth/google',
+            //    method: 'POST',
+            //    data: {
+            //       access_token: res.access_token
+            //    },
+            //    success: (res) => {
+            //       log('GOOGLE RES', res)
+            //    },
+            //    error: (err) => {
+            //       log('GOOGLE ERR', err)
+            //    }
+            // });
+
+            // n.ajax({
+            //    url: 'http://localhost/auth/google',
+            //    method: 'POST',
+            //    data: {
+            //       access_token: 'widodo'
+            //    },
+            //    success: function (data) {
+            //       log('SUKSES:', data)
+            //    },
+            //    error: function (err) {
+            //       log('ERROR', err);
+            //    }
+            // })
+         }
+      });
+
+      d.querySelector('#googleLogin')?.addEventListener('click', () => {
+         client.requestAccessToken(); // 🔥 INI YANG MEMUNCULKAN POPUP
+      });
+      return client;
+   };
+
+   //////////////////////////////////
+   ////////// PRIVATE METHOD ////////
+   //////////////////////////////////
+   options.base_url = options?.base_url?.replace(/^\/|\/$/g, "");//hilangkan '/' awal dan akhir
+   q.config({ observer: true, formCostum: true, router: true, platform: true, ...options });
+   n.ready(async function () {
+      // render background canvas
+      Kernel.background();
+      // 
+      instance.utils = { ...await n.getConfig(), ...instance.utils };
+
+      pageViews.header = d.querySelector('header');
+      pageViews.main = d.querySelector('main');
+      pageViews.footer = d.querySelector('footer');
+
+      pageViews.header.addEventListener('click', function (ev) {
+         if (ev.target.closest('.nav-button')) {
+            // jika tombol 'nav-button' di klik
+            log(ev.target.closest('button'))
+            location.hash = 'auth';
+         }
+      });
+
+
+      n.observer(d.body, { childList: true, subtree: true });
+
+      n('body').on('addElement', ({ detail }) => {
+         const nodes = detail.added;
+         nodes.forEach(node => {
+            if (node.matches('.frm-sign')) {
+               const client = google.accounts.oauth2.initTokenClient({
+                  client_id: '598543379687-1o9bsasf8sialvhb0j8llndbhjgbgl6u.apps.googleusercontent.com',
+                  scope: 'email profile',
+                  callback: (res) => {
+                     // location.hash = ;
+                     n.location('auth/google', { access_token: res.access_token })
+                  }
+               });
+               d.querySelector('#googleLogin')?.addEventListener('click', () => {
+                  client.requestAccessToken(); // 🔥 INI YANG MEMUNCULKAN POPUP
+               });
+            } else if (node.matches('.frm-otp')) {
+               q('form.otp').on('submit', function (ev) {
+                  ev.preventDefault();
+                  let inputs = ev.target.querySelectorAll('.form-otp>input');
+                  const otp = Array.from(inputs).map((input) => input.value).join("");
+                  if (otp.length < 6) {
+                     alert("Lengkapi semua digit OTP!");
+                     return;
+                  };
+                  email = d.querySelector('#otp_email').value;
+                  n.app.request('auth/verify', {
+                     data: { otp, email },
+                     method: 'POST',
+                     success: function (data) {
+                        log('OAUTH:', data)
+                     },
+                     error: function (err) {
+                        log('OAUTH-ERROR', err);
+                     }
+                  });
+                  // log(otp)
+               });
+            }
+         })
+      });
+   });
+
+   //////////////////////////////////
+   ////////// PUBLIC METHOD /////////
+   //////////////////////////////////
+   this.request = async function (url, options) {
+      url = url.replace(/^\/|\/$/g, "");//hilangkan '/' awal dan akhir
+      url = this.utils.base_url + '/' + url;
+      try {
+         return await n.ajax({ url: url, ...options });
+      } catch (error) {
+         console.error(`Request Error: "${url}"`, error);
+      }
+   }
+
+   n.addEventListener('routes', async (uri) => {
+
+      uri.path = uri.controller_name === '' ? 'home/web' : uri.path
+      log('URI', uri)
+      // return
+      n.loader({
+         target: d.body,
+         logo: 'assets/images/logo.png'
+      });
+
+      n.app.request(uri.path, {
+         data: uri.data || {},
+         method: uri.data ? 'POST' : 'GET',
+         success: function (data) {
+            if (n.helper.type(data) === 'stringHtml') {
+               data = n.helper.toHTML(data);
+               render(data);
+            } else {
+               log('ROUTER:', data)
+            };
+         },
+         error: function (err) {
+            log('ROUTER ERR:', err)
+         },
+         always: function () {
+            n(d.body).stopLoader();
+         }
+      })
+   });
+
+
+   // window.dispatchEvent(
+   //    new HashChangeEvent("hashchange", {
+   //       '  oldURL': 'oldURL', 'newURL': 'newURL',
+   //       detail: { myData: 123 },
+   //       bubbles: true,
+   //       cancelable: true
+   //    })
+   // );
+
+
+
+};

@@ -550,3 +550,12 @@ function debounce(fn, delay) {
       timer = setTimeout(() => fn.apply(this, args), delay);
    };
 };
+
+
+function fontSize(callback) {
+   if (typeof callback == 'function') {
+      callback(fontSize);
+      stack_fz.push(callback);
+   }
+   return fontSize;
+}

@@ -42,7 +42,7 @@ function loader(options) {
    const id = n.helper.generateUniqueId(5);
    const wrap = n.createElement('div', { class: 'loader', id: id });
    const logo = options?.logo ?
-      n.createElement('img', { alt: 'logo', src: 'assets/img/logo.png' }) :
+      n.createElement('img', { alt: 'logo', src: options.logo }) :
       n.createElement('span', { text: 'loading...' });
    const dot = n.createElement('div', { class: 'loader-dots', html: `<span></span><span></span><span></span>` });
 
