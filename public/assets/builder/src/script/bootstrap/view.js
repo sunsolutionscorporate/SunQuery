@@ -32,10 +32,11 @@ const View = function () {
    n.addEventListener('routes', async (uri) => {
       uri.controller_name = uri.controller_name.replace(/^\/|\/$/g, "");//hilangkan '/' awal dan akhir;
       uri.controller_name = uri.controller_name || app.utils.defaultRouter || 'web';
-
       if (typeof views[uri.controller_name] !== 'function') {
          throw new Error(`[View] Controller '${uri.controller_name}' not found!`);
       };
+
+
 
       uri.host = app.host;
       const page = await views[uri.controller_name](uri);
@@ -53,8 +54,8 @@ View.dispatch = function (src, events) {
          this.mount = events?.mount || function () { };
          this.getContent = function () {
             return src;
-         }
-      }
+         };
+      };
    }(src, events);
 };
 

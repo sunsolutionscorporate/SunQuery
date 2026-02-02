@@ -19,6 +19,7 @@
          } else {
             throw new Error(`[attach] method 'getContent' not found on 'source' by 'Dispatcher'`);
          }
+
       }
       // }
       if (n.helper.type(source, 'object')) {
@@ -32,6 +33,7 @@
       if (n.helper.type(source, 'stringHtml')) {
          source = n.helper.toHTML(source);
       }
+      // log(source)
       if (n.helper.type(source, 'array')) {
          target.append(...source);
          return true;

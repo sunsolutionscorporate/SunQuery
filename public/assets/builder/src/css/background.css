@@ -28,7 +28,7 @@ canvas.bg-sky {
   background-size: cover;
   background-repeat: repeat-x;
   animation: scrollMap 120s linear infinite;
-  background-image: url("../img/peta2.svg");
+  background-image: url("../images/peta2.svg");
   filter: hue-rotate(30deg) brightness(0.4);
   fill: red;
 }

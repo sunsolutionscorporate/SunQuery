@@ -530,3 +530,57 @@ function load(url, options) {
 };
 
 
+function popup(options) {
+   this.forEach(el => {
+      el.addEventListener('click', (ev) => {
+         const target = ev.target.closest('button');
+         // const pos = { x: ev.clientX, y: ev.clientY };
+         let list = '';
+         const popup = n.createElement('ul', {
+            class: 'popupMenu',
+         });
+         options.menu.forEach(item => {
+            const icon = item.icon ? `<i class="ph ph-${item.icon}"></i>` : '';
+            const li = n.createElement('li', { html: `<a>${icon}${item.label}</a>` });
+            item.context = li;
+            popup.append(li);
+         })
+         n.layerManager.define("popupMenu", {
+            source: target,
+            causeExit: ["onblur", "onfocus"],
+            overlay: {
+               backdrop: false,
+               matchWidth: false,
+               attached: false,
+               content: popup,
+            },
+            connected: async function (ev) {
+               const context = ev.context;
+               if (ev.type === "init") {
+                  const pos = ev.src.getBoundingClientRect();
+                  n(context).css({ top: `${pos.bottom}px`, left: `${pos.x}px` });
+                  const rect = popup.getBoundingClientRect();
+                  if ((rect.width + rect.x) >= (window.innerWidth - 20)) {
+                     n(context).css({ left: `${pos.right - rect.width}px` });
+                  }
+               } else if (ev.type === "click" || ev.type === "escape") {
+                  this.release();
+               } else if (ev.type === 'onblur') {
+                  if (!target.contains(context)) {
+                     this.release();
+                  }
+               } else if (ev.type == "onfocus") {
+                  options.menu.forEach(item => {
+                     if (item.context.contains(ev.target)) {
+                        item.action(ev);
+                        this.release();
+                     };
+                  });
+               }
+            }
+         });
+      });
+   })
+}
+
+

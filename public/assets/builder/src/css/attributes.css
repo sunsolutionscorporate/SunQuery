@@ -8,6 +8,19 @@
   margin: 0;
 }
 
+.action-group {
+  display: inline-flex;
+  gap: 0.5rem;
+  height: 35px;
+}
+
+.action-group .btn {
+  padding: 0 0.5rem;
+}
+.action-group .btn:hover {
+  transform: unset;
+}
+
 section {
   all: unset;
   display: grid;
@@ -19,7 +32,8 @@ section {
 section > .head {
   display: flex;
   justify-content: space-between;
-  padding: 10px 0;
+  align-items: center;
+  padding: 0px 0;
   gap: 5px;
   background: transparent;
   backdrop-filter: blur(3px);
@@ -35,9 +49,11 @@ section > .head > h1 {
 }
 
 section > .body {
-  display: grid;
+  position: relative;
+  display: block;
+  /* display: grid;
   grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr; */
   gap: 2rem;
   max-height: inherit;
 }
@@ -84,3 +100,7 @@ section > .body {
 .form-group .input-group {
   flex: 1;
 } */
+
+button[fad="close"] {
+  color: red;
+}

@@ -19,6 +19,7 @@
          } else {
             throw new Error(`[attach] method 'getContent' not found on 'source' by 'Dispatcher'`);
          }
+
       }
       // }
       if (n.helper.type(source, 'object')) {
@@ -32,6 +33,7 @@
       if (n.helper.type(source, 'stringHtml')) {
          source = n.helper.toHTML(source);
       }
+      // log(source)
       if (n.helper.type(source, 'array')) {
          target.append(...source);
          return true;
@@ -56,6 +58,221 @@
    //////////////////////////////////////////
    ////////// KODE BLOK UI ////////////////
    //////////////////////////////////////////
+const Modal = function () { }
+
+Modal.prototype = {
+   // 
+   resident_view: function () {
+
+      return `<form class="paper">
+                     <div class="form-input vertical">
+                        <label for="nik">NIK</label>
+                        <div class="input-group">
+                           <input type="text" value="1802262403910001" name="nik" id="nik" />
+                        </div>
+                     </div>
+                     <div class="form-input vertical">
+                        <label for="nama">Nama Lengkap</label>
+                        <div class="input-group">
+                           <input type="text" value="SUGENG WAHYU WIDODO" name="nama" id="nama" />
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="form-input vertical">
+                           <label for="email">Tempat lahir</label>
+                           <div class="input-group">
+                              <input type="text" value="LABUHAN MARINGGAI" name="email" id="email" />
+                           </div>
+                        </div>
+                        <div class="form-input vertical">
+                           <label for="email">Tanggal lahir</label>
+                           <div class="input-group">
+                              <input type="text" value="24-03-1991" name="email" id="email" />
+                           </div>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="form-input vertical">
+                           <label for="email">Jenis Kelamin</label>
+                           <div class="input-group">
+                              <input type="text" value="" name="email" id="email" />
+                           </div>
+                        </div>
+                        <div class="form-input vertical">
+                           <label for="email">Agama</label>
+                           <div class="input-group">
+                              <input type="text" value="" name="email" id="email" />
+                           </div>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="form-input vertical">
+                           <label for="email">Pendidikan terakhir</label>
+                           <div class="input-group">
+                              <input type="text" value="" name="email" id="email" />
+                           </div>
+                        </div>
+                        <div class="form-input vertical">
+                           <label for="email">Status perkawinan</label>
+                           <div class="input-group">
+                              <input type="text" value="" name="email" id="email" />
+                           </div>
+                        </div>
+                     </div>
+                     <div class="form-input vertical">
+                        <label for="nama">Pekerjaan</label>
+                        <div class="input-group">
+                           <input type="text" value="" name="nama" id="nama" />
+                        </div>
+                     </div>
+                     <div class="form-input vertical">
+                        <label for="nama">Alamat</label>
+                        <div class="input-group">
+                           <input type="text" value="" name="nama" id="nama" />
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="form-input vertical">
+                           <label for="email">Dusun</label>
+                           <div class="input-group">
+                              <input type="text" value="" name="email" id="email" />
+                           </div>
+                        </div>
+                        <div class="form-input vertical">
+                           <label for="email">RT</label>
+                           <div class="input-group">
+                              <input type="text" value="" name="email" id="email" />
+                           </div>
+                        </div>
+                        <div class="form-input vertical">
+                           <label for="email">RW</label>
+                           <div class="input-group">
+                              <input type="text" value="" name="email" id="email" />
+                           </div>
+                        </div>
+                     </div>
+                     <div class="action-group">
+                        <button type="button" class="btn btn-danger"><i class="ph ph-x"></i> Batal</button>
+                        <button type="button" class="btn btn-primary"><i class="ph ph-check"></i> Simpan</button>
+                     </div>
+              </form>`;
+   },
+   map: new function MapEditable() {
+      const instance = this;
+
+      this.popup = new function () {
+         this.bidang = function (feature) {
+
+            return `
+            <div class="bind-popup-bidang">
+               <table>
+                  <tr>
+                     <td>NOP</td><td>${feature.properties.nop}</td>
+                  </tr>
+                  <tr>
+                     <td>Pemilik</td><td>${feature.properties.pemilik}</td>
+                  </tr>
+                  <tr>
+                     <td>SHM</td><td>${feature.properties.shm}</td>
+                  </tr>
+               </table>
+               <div class="action-group">
+                  <button class="btn-icon btn-danger" >
+                     <i class="ph ph-x"></i>
+                  </button>
+                  <button class="btn-icon btn-primary" >
+                     <i class="ph ph-pencil"></i>
+                  </button>
+               </div>
+            </div>`;
+         };
+         this.marker = function (feature) {
+
+            return `
+            <div class="bind-popup-marker">
+               <table>
+                  <tr>
+                     <td colspan="2">${feature.properties.nama}</td>
+                  </tr>
+                  <tr>
+                     <td>Jenis</td><td>${feature.properties.jenis}</td>
+                  </tr>
+               </table>
+               <div class="action-group">
+                  <button class="btn-icon btn-danger" >
+                     <i class="ph ph-x"></i>
+                  </button>
+                  <button class="btn-icon btn-primary" >
+                     <i class="ph ph-pencil"></i>
+                  </button>
+               </div>
+            </div>`;
+         };
+      };
+
+      this.form = new function () {
+         this.bidang = function (options) {
+            const form = n.createElement('form', {
+               class: 'paper',
+               html: `
+                     <div class="form-input vertical">
+                        <label for="pemilik">Pemilik</label>
+                        <div class="input-group">
+                           <input type="text" value="" name="pemilik" id="pemilik" />
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <div class="form-input vertical">
+                           <label for="shm">Nomor Surat/SHM</label>
+                           <div class="input-group">
+                              <input type="text" value="" name="shm" id="shm" />
+                           </div>
+                        </div>
+                        <div class="form-input vertical">
+                           <label for="nop">NOP</label>
+                           <div class="input-group">
+                              <input type="text" value="" name="nop" id="nop" />
+                           </div>
+                        </div>
+                     </div>
+                    
+                     <div class="action-group">
+                        <button type="button" dismiss="modal" class="btn btn-danger"><i class="ph ph-x"></i> Batal</button>
+                        <button type="submit" class="btn btn-primary"><i class="ph ph-check"></i> Simpan</button>
+                     </div>
+            `
+            });
+
+            n(form).on('submit', function (ev) {
+               ev.preventDefault()
+               const pemilik = this.elements['pemilik'].value;
+               const shm = this.elements['shm'].value;
+               const nop = this.elements['nop'].value;
+
+               options.layer.feature = {
+                  type: 'Feature',
+                  properties: {
+                     pemilik: pemilik,
+                     shm: shm,
+                     nop: nop
+                  }
+               };
+
+               options.layer.bindPopup(instance.popup.bidang(options.layer.feature));
+
+               options.draw.addLayer(options.layer);
+               // log("GeoJSON:", JSON.stringify(options.editableLayers.toGeoJSON()));
+               log("GeoJSON:", options.editableLayers.toGeoJSON().features[0].geometry.coordinates);
+               form.querySelector('button[dismiss="modal"]').click();
+            });
+
+            return form;
+         };
+      };
+
+
+   },
+};
 const UI = function () {
 
 };
@@ -163,6 +380,124 @@ UI.prototype.component = new function () {
    //////////////////////////////////////////
    ////////// KODE BLOK KERNEL ////////////////
    //////////////////////////////////////////
+class ContextMenu {
+   static #mapData = new WeakMap();
+   static #initialized = false;
+   static #lastContext = null;
+
+   constructor() {
+      if (ContextMenu.#initialized) return;
+
+      ContextMenu.#initialized = true;
+
+      // remove ContextMenu saat terjadi scroll pada sebuah halaman
+      document.addEventListener('scroll', e => {
+         // console.log('scroll dari:', e.target);
+         if (ContextMenu.#lastContext) {
+            ContextMenu.#lastContext.release();
+         };
+      }, true);
+
+
+      document.addEventListener('contextmenu', ev => {
+         ev.preventDefault();
+
+         const source = ev.target.closest('[data-context]') || ev.target;
+
+         const config = ContextMenu.#mapData.get(source);
+
+         if (!config) return;
+
+         const menu = n.createElement('div', {
+            class: 'contextMenu',
+            html: `<div class="header">
+                     <span></span>
+                        <button class="btn-icon btn-danger" dismiss="modal">
+                           <i class="ph ph-x"></i>
+                        </button>
+                  </div>`,
+         });
+         const ul = n.createElement('ul');
+         let data = {
+            context: menu,
+            source: source
+         };
+         menu.append(ul);
+         config.items.forEach(item => {
+            const icon = item.icon ? `<i class="ph ph-${item.icon}"></i>` : '';
+            const li = n.createElement('li', { html: `<a>${icon}${item.label}</a>` });
+            item.context = li;
+            ul.append(li);
+         });
+
+         if (ContextMenu.#lastContext) {
+            ContextMenu.#lastContext.release();
+         };
+         if (typeof config?.attach === 'function') {
+            data = config.attach.call(menu, ev, {
+               context: menu,
+               source: source
+            });
+         }
+         if (!data) return;
+         const pos = { x: ev.clientX, y: ev.clientY };
+
+         n.layerManager.define("contextMenu", {
+            source: data.source,
+            causeExit: ["onblur", "onfocus"],
+            overlay: {
+               backdrop: false,
+               matchWidth: false,
+               attached: false,
+               content: menu,
+            },
+            connected: async function (ev) {
+               const target = ev;
+               const context = target.context;
+
+               if (ev.type === "init") {
+                  ContextMenu.#lastContext = context;
+                  n(context).css({ top: `${pos.y}px`, left: `${pos.x}px` });
+                  const rect = menu.getBoundingClientRect();
+                  if ((rect.width + rect.x) >= (window.innerWidth - 20)) {
+                     n(context).css({ left: `${pos.x - rect.width}px` });
+                  }
+                  if (rect.y - rect.height - 20 > 0) {
+                     n(context).css({ top: `${pos.y - rect.height}px` });
+                  }
+
+               } else if (ev.type === "click" || ev.type === "escape") {
+                  this.release();
+                  ContextMenu.#lastContext = null;
+               } else if (ev.type === 'onblur') {
+                  if (!source.contains(context)) {
+                     this.release();
+                     ContextMenu.#lastContext = null;
+                  }
+               } else if (ev.type == "onfocus") {
+                  config.items.forEach(item => {
+                     if (item.context.contains(ev.target)) {
+                        item.action(ev);
+                        this.release();
+                     };
+                  });
+                  ContextMenu.#lastContext = null;
+               }
+            }
+         });
+      });
+   }
+
+   define(source, options) {
+      if (!options) return;
+      n(source).attr('data-context', '');
+      ContextMenu.#mapData.set(source, options || { items: [] });
+   }
+}
+
+
+
+
 
 function Kernel(options) {
    if (!options?.host) {
@@ -171,6 +506,8 @@ function Kernel(options) {
    options.host = options?.host?.replace(/^\/|\/$/g, "") + "/";//hilangkan '/' awal dan akhir
    this.version = '1.0.0';
    this.UI = new UI();
+   this.Modal = new Modal();
+   this.contextMenu = (new ContextMenu()).define;
    this.host = options.host;
    const router = new View();
    const instance = this;
@@ -188,8 +525,90 @@ function Kernel(options) {
       // 
       instance.utils = { ...await n.getConfig(), ...instance.utils };
 
+      document.addEventListener("click", function (ev) {
+         const target = ev.target;
+         if (target.closest('.item')) {
 
+            const ripple = document.createElement("div");
+            ripple.className = "cursor-ripple";
+            ripple.style.left = `${ev.clientX - 10}px`;
+            ripple.style.top = `${ev.clientY - 10}px`;
+            ripple.style.width = "20px";
+            ripple.style.height = "20px";
 
+            document.body.appendChild(ripple);
+
+            // Hapus setelah animasi selesai
+            ripple.addEventListener("animationend", () => {
+               ripple.remove();
+            });
+         }
+      });
+
+      // method untuk membuat auto focus pada form
+      const fieldMap = new WeakMap();
+      const EVENTS = ['focus', 'input', 'blur', 'change'];
+      function attachForm(group) {
+         group.querySelectorAll('input, textarea, select').forEach(field => {
+            if (fieldMap.has(field)) return;
+
+            if (field.value) {
+               n(field).closest('.form-input').addClass('focused')
+            } else {
+               n(field).closest('.form-input').removeClass('focused')
+            }
+            const handlers = {
+               focus: e => n(field).closest('.form-input').addClass('focused'),
+               input: e => n(field).closest('.form-input').addClass('focused'),
+               blur: e => !field.value && n(field).closest('.form-input').removeClass('focused'),
+               change: e => {
+                  if (field.value) {
+                     n(field).closest('.form-input').addClass('focused')
+                  } else {
+                     n(field).closest('.form-input').removeClass('focused')
+                  }
+               }
+            };
+
+            EVENTS.forEach(ev =>
+               field.addEventListener(ev, handlers[ev], ev === 'focus')
+            );
+
+            fieldMap.set(field, handlers);
+         });
+      };
+      function detachForm(group) {
+         group.querySelectorAll('input, textarea, select').forEach(field => {
+            const handlers = fieldMap.get(field);
+            if (!handlers) return;
+
+            EVENTS.forEach(ev =>
+               field.removeEventListener(ev, handlers[ev], ev === 'focus')
+            );
+
+            fieldMap.delete(field);
+         });
+      };
+      observer('.form-input.vertical', {
+         onAdd: attachForm,
+         onRemove: detachForm
+      });
+      observer('.form-group.vertical', {
+         onAdd: el => {
+            const labels = el.querySelectorAll('label');
+            let max = 0;
+            labels.forEach(l => {
+               l.style.width = "auto";   // reset dulu
+               max = Math.max(max, l.offsetWidth);
+            });
+            // log('max', max)
+            labels.forEach(l => {
+               l.style.minWidth = max + "px";
+               l.style.width = max + "px";
+            });
+         },
+         // onRemove: detachForm
+      });
    });
 
    //////////////////////////////////
@@ -207,8 +626,37 @@ function Kernel(options) {
 
    this.view = function (view) {
       router.define(view);
-   }
+   };
 };
+function observer(selector, options) {
+   const { onAdd = () => { }, onRemove = () => { } } = options;
+   const obs = new MutationObserver(mutations => {
+      mutations.forEach(m => {
+         m.addedNodes.forEach(n => {
+            if (n.nodeType !== 1) return;
+
+            if (n.matches?.(selector)) onAdd?.(n);
+            n.querySelectorAll?.(selector).forEach(onAdd);
+         });
+
+         m.removedNodes.forEach(n => {
+            if (n.nodeType !== 1) return;
+
+            if (n.matches?.(selector)) onRemove?.(n);
+            n.querySelectorAll?.(selector).forEach(onRemove);
+         });
+
+      });
+   });
+   obs.observe(document.body, { childList: true, subtree: true });
+   // initial
+   document.querySelectorAll(selector).forEach(onAdd);
+   return obs;
+}
+
+// pakai:
+
+
 Kernel.background = function () {
    const canvas = q.createElement("canvas", { class: "bg-sky" });
    // q("body").append(canvas, "afterbegin");
@@ -336,10 +784,11 @@ const View = function () {
    n.addEventListener('routes', async (uri) => {
       uri.controller_name = uri.controller_name.replace(/^\/|\/$/g, "");//hilangkan '/' awal dan akhir;
       uri.controller_name = uri.controller_name || app.utils.defaultRouter || 'web';
-
       if (typeof views[uri.controller_name] !== 'function') {
          throw new Error(`[View] Controller '${uri.controller_name}' not found!`);
       };
+
+
 
       uri.host = app.host;
       const page = await views[uri.controller_name](uri);
@@ -357,8 +806,8 @@ View.dispatch = function (src, events) {
          this.mount = events?.mount || function () { };
          this.getContent = function () {
             return src;
-         }
-      }
+         };
+      };
    }(src, events);
 };
 
@@ -378,28 +827,84 @@ View.dispatch = function (src, events) {
    //////////////////////////////////////////
 app.view({
    dashboard: function (sss) {
+      const isi = [
+         {
+            ico: 'user-list',
+            title: 'Residents',
+            desc: 'deskripsi resident data',
+            hash: 'residents'
+         },
+         {
+            ico: 'barn',
+            title: 'Letters',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'Letters',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+      ];
       let items = '';
-
-      for (let i = 0; i < 20; i++) {
-
+      for (let i = 0; i < isi.length; i++) {
          items += `
-            <div class="item">
-               <div class="head">
-                  <i class="ph-fill ph-user-list"></i>
-               </div>
-               <div class="body">
-                  <div class="title">Residents</div>
-                  <div class="desc"> Kelola Data Penduduk desa dan luar desa agar supaya berguna</div>
-                  <div class="action-group">
-                     <a class="btn btn-primary" href="#/penduduk/">
-                        <i class="ph ph-book-open"></i>
-                        <span>Open</span>
-                     </a>
+               <div class="item">
+                  <div class="head">
+                     <i class="ph-fill ph-${isi[i].ico}"></i>
+                  </div>
+                  <div class="body">
+                     <div class="title">${isi[i].title}</div>
+                     <div class="desc">${isi[i].desc}</div>
+                     <div class="action-group">
+                        <a href="#${isi[i].hash}" class="btn btn-primary">
+                           <i class="ph ph-book-open"></i>
+                           <span>Open</span>
+                        </a>
+                     </div>
                   </div>
                </div>
-            </div>
-         `;
+            `;
       }
+      // let items = `
+      //       <div class="item">
+      //          <div class="head">
+      //             Nomor
+      //          </div>
+      //          <div class="body">
+      //             <div class="title">Residents</div>
+      //             <div class="desc"> Kelola Data Penduduk desa dan luar desa agar supaya berguna</div>
+      //             <div class="action-group">
+      //                <a class="btn btn-success">
+      //                   <i class="ph ph-book-open"></i>
+      //                   <span>Open</span>
+      //                </a>
+      //             </div>
+      //          </div>
+      //       </div>      
+      // `;
+
+      // for (let i = 0; i < 5; i++) {
+
+      //    items += `
+      //       <div class="item">
+      //          <div class="head">
+      //             <i class="ph-fill ph-user-list"></i>
+      //          </div>
+      //          <div class="body">
+      //             <div class="title">Residents</div>
+      //             <div class="desc"> Kelola Data Penduduk desa dan luar desa agar supaya berguna</div>
+      //             <div class="action-group">
+      //                <a class="btn btn-primary">
+      //                   <i class="ph ph-book-open"></i>
+      //                   <span>Open</span>
+      //                </a>
+      //             </div>
+      //          </div>
+      //       </div>
+      //    `;
+      // }
 
       const panel = `
       <div class="panel">
@@ -412,27 +917,51 @@ app.view({
          </div>
       </div>
       `;
-      const section = `
-         <section>
-            <div class="head">
+      const section = n.createElement('section', { class: 'list' });
+      section.innerHTML = ` <div class="head">
                <h1>Dashboard</h1>
+               <div class="action-group">
+                  <button class="btn-icon" fad="search" type="button">
+                     <i class="ph ph-magnifying-glass"></i>
+                  </button>
+                  <button class="btn-icon" fad="view" type="button">
+                     <i class="ph ph-squares-four"></i>
+                  </button>
+                  <button class="btn-icon" fad="add" type="button">
+                     <i class="ph ph-plus-square"></i>
+                  </button>
+               </div>
             </div>
             <div class="body">
                ${panel}
-            </div>
-         </section>   
-      `;
+            </div>`;
 
       return View.dispatch(section, {
-         mount(res) {
+         mount(uri) {
             n.fontSize(rootFSize => {
-               const head = this.querySelector('section>.head')
+               const head = this.querySelector('section>.head');
                const height = head.getBoundingClientRect().height;
 
                const main_h = this.getBoundingClientRect().height;
                n(this).find('section').css('max-height', `${main_h - height}px`)
-            })
-         }
+            });
+
+            // n.storage.save('uri', {
+            //    name: uri.controller_name,
+            //    view: section.matches('.list') ? 'list' : 'grid'
+            // });
+
+            const action = this.querySelector('section>.head>.action-group');
+            action.addEventListener('click', ev => {
+               const btn = ev.target.closest('button');
+               if (!btn) return;
+               // view
+               if (btn.matches('[fad="view"]') && btn.closest('section')) {
+                  const target = btn.closest('section');
+                  n(target).toggleClass('list');
+               };
+            });
+         },
       });
    },
 });
@@ -542,6 +1071,352 @@ app.view({
                client.requestAccessToken(); // 🔥 INI YANG MEMUNCULKAN POPUP
             });
          }
+      });
+   },
+});
+app.view({
+   map: function (sss) {
+      const panel = n.createElement('div', {
+         class: 'panel',
+         html: `<div class="head">
+                  <div>
+                     <h1 class="title">Map Data</h1>
+                     <div class="subtitle">Kelola Data Administrasi Wilayah</div>
+                  </div>
+                  <div class="action-group">
+                     <button class="btn-icon" fad="search" type="button">
+                        <i class="ph ph-magnifying-glass"></i>
+                     </button>
+                     <button class="btn-icon" fad="filter" type="button">
+                        <i class="ph ph-sliders"></i>
+                     </button>
+                     <button class="btn-icon" fad="add" type="button">
+                     <i class="ph ph-plus-square"></i>
+                     </button>
+                     <button class="btn-icon" fad="view" type="button">
+                        <i class="ph ph-polygon"></i>
+                     </button>
+                  </div>
+               </div>
+               <div class="data-map" id="map"></div>`
+      });
+
+      const modal_form = function (source, options) {
+         n.modal({
+            header: {
+               title: options?.title || 'No Title',
+               close: true,
+            },
+            dismiss: {
+               esc: true,
+               backdrop: true,
+            },
+            source: source, // elemen pemicu (opsional)
+            // content: "contoh", // url | string | html | element
+            content: options.content,
+            size: "md", // sm | md | lg | xl (dinormalisasi)
+         });
+      };
+
+      const data = {
+         type: "FeatureCollection",
+         features: [
+            {
+               type: "Feature", properties: { pemilik: "SUDAR", shm: "123456", nop: "18.02.0812" },
+               geometry: { type: "Polygon", coordinates: [[[105.809615, -4.662925], [105.810418, -4.663354], [105.810013, -4.664155], [105.809214, -4.663741], [105.809615, -4.662925]]] }
+            },
+            {
+               type: "Feature", properties: { pemilik: "MISNAN", shm: "1012475", nop: "18.02.008.3" }, geometry: { type: "Polygon", coordinates: [[[105.809533, -4.665054], [105.809128, -4.665842], [105.809935, -4.666283], [105.810351, -4.665463], [105.809533, -4.665054]]] }
+            },
+            {
+               type: "Feature", properties: { pemilik: "MISNAN", shm: "1012475", nop: "18.02.008.4" }, geometry: { type: "Polygon", coordinates: [[[105.812003, -4.666205], [105.812777, -4.666598], [105.813189, -4.665808], [105.812416, -4.665423], [105.812003, -4.666205]]] }
+            },
+            {
+               type: "Feature", properties: { pemilik: "MISNAN", shm: "1012475", nop: "18.02.008.6" }, geometry: { type: "Polygon", coordinates: [[[105.809828, -4.662926], [105.808937, -4.662433], [105.809224, -4.661953], [105.810107, -4.66241], [105.809828, -4.662926]]] }
+            },
+            {
+               type: "Feature", properties: { type: "batas_desa" }, geometry: { type: "Polygon", coordinates: [[[105.79731, -4.643172], [105.803661, -4.654286], [105.814991, -4.651551], [105.816793, -4.664375], [105.815334, -4.669675], [105.812416, -4.673266], [105.800228, -4.671727], [105.793962, -4.664118], [105.79731, -4.643172]]] }
+            },
+            {
+               type: "Feature",
+               properties: { nama: "Balai Kampung", jenis: "Perkantoran" },
+               geometry: { type: "Point", coordinates: [105.808586, -4.659951] }
+            },
+            {
+               type: "Feature",
+               properties: { nama: "Poskesdes", jenis: "Kesehatan" },
+               geometry: { type: "Point", coordinates: [105.808681, -4.660217] }
+            },
+            {
+               type: "Feature",
+               properties: { nama: "Gapoktan", jenis: "Perkantoran" },
+               geometry: { type: "Point", coordinates: [105.808237, -4.660996] }
+            },
+            {
+               type: "Feature",
+               properties: { nama: "SDN 1 Cabang", jenis: "Pendidikan" },
+               geometry: { type: "Point", coordinates: [105.80566, -4.665657] }
+            },
+         ]
+      };
+
+
+
+      return View.dispatch(panel, {
+         mount(uri) {
+            const map = L.map('map', {
+               zoomControl: false
+            }).setView([-4.665833, 105.805833], 15);
+
+            // === satelit
+            L.tileLayer(
+               "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+               { maxZoom: 20, attribution: 'wahyu_widodo', maxNativeZoom: 18 }
+            ).addTo(map);
+
+            // ================= LAYERS =================
+            const bidangLayer = new L.FeatureGroup().addTo(map);
+            const jalanLayer = new L.FeatureGroup().addTo(map);
+            const kanalLayer = new L.FeatureGroup().addTo(map);
+            const markerLayer = new L.FeatureGroup().addTo(map);
+            const batasLayer = new L.FeatureGroup().addTo(map);
+
+            L.geoJSON(data, {
+               onEachFeature: (feature, layer) => {
+                  if (layer instanceof L.Polygon && !(layer instanceof L.Rectangle)) {
+                     if (feature.properties?.type !== 'batas_desa') {
+                        layer.bindPopup(app.Modal.map.popup.bidang(feature));
+                        bidangLayer.addLayer(layer);
+                     } else {
+                        batasLayer.addLayer(layer);
+                     }
+                  };
+                  // JALAN / KANAL
+                  if (layer instanceof L.Polyline && !(layer instanceof L.Polygon)) {
+                     if (feature.properties?.jenis === "jalan") jalanLayer.addLayer(layer);
+                     if (feature.properties?.jenis === "kanal") kanalLayer.addLayer(layer);
+                  };
+                  if (layer instanceof L.Marker) {
+                     layer.bindPopup(app.Modal.map.popup.marker(feature));
+                     markerLayer.addLayer(layer);
+                  };
+               },
+               style: feature => {
+
+                  if (feature.properties?.jenis === "jalan")
+                     return { color: "red", weight: 4 };
+
+                  if (feature.properties?.jenis === "kanal")
+                     return { color: "blue", weight: 4 };
+
+                  if (feature.properties?.type === "batas_desa") {
+                     return {
+                        color: '#ff9100ff',
+                        weight: 2,
+                        dashArray: '8,6',
+                        fill: false
+                     };
+                  }
+                  return {
+                     color: '#39b400ff',
+                     weight: 1,
+                     fillOpacity: .2
+                  };
+               }
+            });//.addTo(map);
+
+
+
+            // container edit tunggal
+            const editableLayers = new L.FeatureGroup([
+               bidangLayer,
+               jalanLayer,
+               kanalLayer,
+               markerLayer,
+               batasLayer
+            ]).addTo(map);
+
+
+            // ================= DRAW CONTROL =================
+            const drawControl = new L.Control.Draw({
+               edit: {
+                  featureGroup: editableLayers
+               },
+               draw: {
+                  polyline: false,
+                  polygon: false,
+                  rectangle: false,
+                  circle: false,
+                  marker: false,
+                  circlemarker: false
+               }
+            });
+            // map.addControl(drawControl);
+
+            // Buat tombol custom: Bidang Tanah
+            const drawBidang = new L.Draw.Polygon(map, {
+               showArea: true,
+               shapeOptions: {
+                  color: '#ffc400ff',
+                  fillOpacity: 0.2,
+                  weight: 1,
+               }
+            });
+            // Buat tombol custom: jalan
+            const drawJalan = new L.Draw.Polyline(map, {
+               shapeOptions: { color: 'red', weight: 4 },
+               repeatMode: false
+            });
+
+            // Buat tombol custom: kanal
+            const drawKanal = new L.Draw.Polyline(map, {
+               shapeOptions: { color: 'blue', weight: 4 },
+               repeatMode: false
+            });
+
+            // Buat tombol custom: Marker / Tanda
+            const drawMarker = new L.Draw.Marker(map, {
+               repeatMode: false,
+            });
+
+            // Batas Desa (polygon dashed)
+            const drawBatas = new L.Draw.Polygon(map, {
+               shapeOptions: {
+                  color: '#ff9900',
+                  weight: 3,
+                  dashArray: '8,6',
+                  fill: false
+               }
+            });
+
+
+
+            n('button[fad="add"]').popup({
+               menu: [
+                  {
+                     label: 'Tambah Bidang',
+                     action: () => drawBidang.enable(),
+                  },
+                  {
+                     label: 'Buat Tanda',
+                     action: () => {
+                        drawMarker.enable();
+                     },
+                  },
+                  {
+                     label: 'Tambah Jalan',
+                     action: () => {
+                        drawJalan.enable();
+                     },
+                  },
+                  {
+                     label: 'Tambah Irigasi',
+                     action: () => {
+                        drawKanal.enable();
+                     },
+                  },
+                  {
+                     label: 'Batas Desa',
+                     action: () => {
+                        drawBatas.enable();
+                     },
+                  },
+               ],
+            });
+
+            // event saat polygon dibuat
+            map.on(L.Draw.Event.CREATED, function (e) {
+               const layer = e.layer;
+               // ===== BATAS DESA
+               if (layer instanceof L.Polygon && layer.options.dashArray) {
+                  layer.feature = {
+                     type: "Feature",
+                     properties: {
+                        jenis: "batas_desa",
+                        nama: "Cabang " + (batasLayer.getLayers().length + 1)
+                     }
+                  };
+                  // layer.bindPopup(`
+                  //    <b>Batas Desa</b><br>
+                  //    ${layer.feature.properties.nama}
+                  //    `);
+
+                  batasLayer.addLayer(layer);
+
+                  log("GeoJSON:", editableLayers.toGeoJSON());
+                  return;
+               }
+
+               // ===== BIDANG (Polygon)
+               if (layer instanceof L.Polygon && !(layer instanceof L.Rectangle)) {
+                  modal_form(n('#map').get(0), {
+                     layer, editableLayers,
+                     content: app.Modal.map.form.bidang({
+                        layer, editableLayers,
+                        draw: bidangLayer
+                     }),
+                     title: 'Form Bidang Tanah'
+                  });
+                  return;
+               };
+
+               // ===== JALAN / KANAL (Polyline)
+               if (layer instanceof L.Polyline && !(layer instanceof L.Polygon)) {
+
+                  const warna = layer.options.color;
+
+                  if (warna === 'red') {
+                     layer.feature = {
+                        type: "Feature",
+                        properties: {
+                           jenis: "jalan",
+                           nama: prompt("Nama Jalan")
+                        }
+                     };
+
+                     layer.bindPopup(`Jalan: ${layer.feature.properties.nama}`);
+                     jalanLayer.addLayer(layer);
+                  }
+
+                  if (warna === 'blue') {
+                     layer.feature = {
+                        type: "Feature",
+                        properties: {
+                           jenis: "kanal",
+                           nama: prompt("Nama Kanal")
+                        }
+                     };
+
+                     layer.bindPopup(`Kanal: ${layer.feature.properties.nama}`);
+                     kanalLayer.addLayer(layer);
+                  }
+               };
+
+               // ===== MARKER
+               if (layer instanceof L.Marker) {
+
+                  const nama = prompt("Nama Lokasi:");
+                  const jenis = prompt("Jenis (Kantor / Masjid / Patok / dll):");
+
+                  layer.feature = {
+                     type: "Feature",
+                     properties: {
+                        nama,
+                        jenis
+                     }
+                  };
+
+                  layer.bindPopup(`
+                     <b>${nama}</b><br>
+                     Jenis: ${jenis}
+                     `);
+
+                  markerLayer.addLayer(layer);
+               }
+
+               console.log("GeoJSON sekarang:", JSON.stringify(editableLayers.toGeoJSON()));
+            });
+         },
       });
    },
 });
@@ -702,6 +1577,469 @@ app.view({
       });
    },
 });
+app.view({
+   residents: function (sss) {
+      const isi = [
+         {
+            ico: 'user-list',
+            title: 'SUGENG WAHYU WIDODO',
+            desc: 'DUSUN III 001/002',
+            hash: 'residents'
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'DUSUN III 001/002',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'barn',
+            title: 'NOERLIA NINGRUM',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+         {
+            ico: 'certificate',
+            title: 'VINCENT ARKAAN FAEZA',
+            desc: 'deskripsi letters data',
+            hash: ''
+         },
+      ];
+      let items = '';
+      for (let i = 0; i < isi.length; i++) {
+         items += `
+               <div class="item">
+                  <div class="head">
+                     <i class="ph-fill ph-${isi[i].ico}"></i>
+                  </div>
+                  <div class="body">
+                     <div class="title">${isi[i].title}</div>
+                     <div class="desc">${isi[i].desc}</div>
+                  </div>
+               </div>
+            `;
+      };
+
+      const panel = n.createElement('div', {
+         class: 'panel',
+         html: `<div class="head">
+                  <div>
+                     <h1 class="title">Residents Data</h1>
+                     <div class="subtitle">Kelola Data Penduduk dalam desa ini</div>
+                  </div>
+                  <div class="action-group">
+                     <button class="btn-icon" fad="search" type="button">
+                        <i class="ph ph-magnifying-glass"></i>
+                     </button>
+                     <button class="btn-icon" fad="filter" type="button">
+                        <i class="ph ph-sliders"></i>
+                     </button>
+                     <button class="btn-icon" fad="view" type="button">
+                        <i class="ph ph-squares-four"></i>
+                     </button>
+                     <button class="btn-icon" fad="add" type="button">
+                        <i class="ph ph-plus-square"></i>
+                     </button>
+                  </div>
+               </div>
+               <div class="body data-view">
+                     <p>Panel content</p>
+                     ${items}
+               </div>`
+      });
+
+      const modal_form = function (source, options) {
+         n.modal({
+            header: {
+               title: "Preview",
+               close: true,
+            },
+            dismiss: {
+               esc: true,
+               backdrop: true,
+            },
+            source: source, // elemen pemicu (opsional)
+            // content: "contoh", // url | string | html | element
+            content: app.Modal.resident_view(),
+            size: "md", // sm | md | lg | xl (dinormalisasi)
+         });
+      };
+
+      const marking = function (source) {
+         if (!n(source).hasClass('marking')) {
+            n(source).addClass('marking');
+            const mark = n.createElement('span', {
+               class: 'marking-icon',
+               html: `<i class="ph-fill ph-check-circle"></i>`
+            });
+            source.appendChild(mark);
+            store.set(source, { value: 123 });
+            console.log('Tandai');
+         } else {
+            n(source).removeClass('marking');
+            source.querySelector('.marking-icon').remove();
+            store.delete(source);
+            log('hilangkan tanda')
+         };
+      };
+
+      const store = new n.Memory();
+      store.addEventListener('memory', ev => {
+         log(ev.action, ev.data.size)
+         const actions = panel.querySelector('.head>.action-group');
+         const btn_check = actions.querySelector('.btn-icon[fad="check-all"]');
+         const btn_add = actions.querySelector('.btn-icon[fad="add"]');
+         if (ev.data.size) {
+            if (btn_check) {
+               btn_check.querySelector('span').textContent = ev.data.size;
+            } else {
+               const btn = n.createElement('button', {
+                  class: 'btn-icon',
+                  fad: 'check-all',
+                  type: 'button',
+                  html: `<i class="ph ph-check-square"></i><span>1</span>`
+               });
+               btn_add.remove();
+               actions.appendChild(btn);
+            }
+         } else {
+            btn_check.remove();
+            const btn = n.createElement('button', {
+               class: 'btn-icon',
+               fad: 'add',
+               type: 'button',
+               html: `<i class="ph ph-plus-square"></i>`
+            });
+            actions.appendChild(btn);
+         }
+      })
+
+      return View.dispatch(panel, {
+         mount(uri) {
+            this.addEventListener('click', ev => {
+               const action = ev.target.closest('.action-group [fad]');
+               const target_item = ev.target.closest('.item');
+               if (!action && !target_item) return;
+               const contextMenu = document.querySelectorAll('.contextMenu');
+               if (contextMenu.length) {
+                  contextMenu.forEach(c => c.parentElement.release());
+                  return;
+               }
+
+               // ubah tampilan [grid/list]
+               if (action && action.matches('[fad="view"]')) {
+                  const target = ev.target.closest('.panel');
+                  n(target).toggleClass('list');
+               };
+
+               // show modal popup
+               if (target_item) {
+                  if (store.size) {
+                     marking(target_item);
+                  } else {
+                     modal_form(target_item);
+                  }
+               };
+            });
+
+            const menu = [
+               {
+                  label: 'Preview data',
+                  icon: 'eye',
+                  action: function (ev) {
+                     modal_form(ev.src);
+                     console.log('preview data');
+                  },
+               },
+               {
+                  label: 'Tandai',
+                  icon: 'check-square',
+                  action: function (ev) {
+                     marking(ev.src);
+                  },
+               },
+               {
+                  label: 'Ubah data',
+                  icon: 'pencil-line',
+                  action: function (ev) {
+                     modal_form(ev.src);
+                     console.log('ubah data');
+                  }
+               },
+               {
+                  label: 'Ubah Status',
+                  icon: 'highlighter',
+                  action: function () {
+                     console.log('ubah status');
+                  }
+               },
+               {
+                  label: 'Hapus',
+                  icon: 'trash',
+                  action: function (ev) {
+                     ev.src.remove();
+                     console.log('hapus');
+                  }
+               },
+            ];
+
+            app.contextMenu(panel, {
+               items: menu,
+               attach: (ev, data) => {
+                  const target = ev.target.closest('.item');
+                  if (!target) return;
+                  data.source = target;
+                  return data;
+               },
+            });
+         },
+      });
+   },
+});
+app.view({
+   tes: function (sss) {
+      const section = n.createElement('section', { class: '' });
+      section.innerHTML = `
+            <div class="body paper">
+               <div class="form-input vertical">
+                  <label for="email">Email</label>
+                  <div class="input-group">
+                     <input type="text" name="email" id="email" />
+                  </div>
+               </div>
+               <div class="form-input vertical">
+                  <label for="nama">Nama</label>
+                  <div class="input-group">
+                     <input type="text" name="nama" id="nama" />
+                  </div>
+               </div>
+               <div class="form-input vertical">
+                  <label for="email">Email</label>
+                  <div class="input-group">
+                     <input type="text" value="widodo@xx" name="email" id="email" />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <div class="form-input">
+                     <label for="email">Email</label>
+                     <div class="input-group">
+                        <input type="text" value="" name="email" id="email" />
+                     </div>
+                  </div>
+                  <div class="form-input">
+                     <label for="email">Alamat Tinggal</label>
+                     <div class="input-group vertical">
+                        <input type="text" value="" name="email" id="email" />
+                        <input type="text" value="" name="email" id="email" />
+                     </div>
+                  </div>
+               </div>
+               <div class="form-group vertical">
+                  <div class="form-input">
+                     <label for="email">Email</label>
+                     <div class="input-group">
+                        <input type="text" value="" name="email" id="email" />
+                     </div>
+                  </div>
+                  <div class="form-input">
+                     <label for="email">Alamat Tinggal hantu</label>
+                     <div class="input-group">
+                        <input type="text" value="" name="email" id="email" />
+                        <input type="text" value="" name="email" id="email" />
+                     </div>
+                  </div>
+               </div>
+               <div class="form-input">
+                  <label for="email">Alamat Tinggal rumah cabang</label>
+                  <div class="input-group">
+                     <input type="text" value="" name="email" id="email" />
+                  </div>
+               </div>
+            </div>`;
+
+      return View.dispatch(section, {
+         mount(uri) {
+            // 
+         },
+      });
+   },
+});
+
+
 app.view({
    web: function (sss) {
       // log(buildURL('/assets/images/logo.png'))

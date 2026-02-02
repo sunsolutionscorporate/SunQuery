@@ -1570,6 +1570,74 @@
             }
             return el;
          },
+         Memory: class {
+            #event = new EventBase();
+            constructor(root = document.body) {
+               this.map = new Map();
+
+               this.observer = new MutationObserver(muts => {
+                  muts.forEach(m => {
+                     m.removedNodes.forEach(n => {
+                        // log(n)
+                        if (n.nodeType === 1) this._cleanup(n);
+                     });
+                  });
+               });
+
+               this.observer.observe(root, {
+                  childList: true,
+                  subtree: true
+               });
+               this.addEventListener = (...args) => this.#event.addEventListener(...args);
+               this.removeEventListener = (...args) => this.#event.removeEventListener(...args);
+               this.dispatchEvent = (...args) => this.#event.dispatchEvent(...args);
+            }
+
+            set(el, data) {
+               this.map.set(el, data);
+               n.EventCustom('memory', { data: this.map, action: 'add' }).target(this);
+            }
+
+            get(el) {
+               return this.map.get(el);
+            }
+
+            delete(el) {
+               this.map.delete(el);
+               n.EventCustom('memory', { data: this.map, action: 'remove' }).target(this);
+            }
+
+            _cleanup(node) {
+               if (this.map.has(node)) {
+                  this.map.delete(node);
+                  n.EventCustom('memory', { data: this.map, action: 'remove' }).target(this);
+               }
+
+               node.querySelectorAll?.("*").forEach(c => {
+                  this.map.delete(c);
+                  if (this.map.has(c)) {
+                     n.EventCustom('memory', { data: this.map, action: 'remove' }).target(this);
+                  }
+               });
+
+            }
+
+            keys() {
+               return [...this.map.keys()];
+            }
+
+            values() {
+               return [...this.map.values()];
+            }
+
+            entries() {
+               return [...this.map.entries()];
+            }
+
+            get size() {
+               return this.map.size;
+            }
+         },
       }).extend(n.createForm, {
          _factory_form(typeName) {
             const input = d.createElement("input");

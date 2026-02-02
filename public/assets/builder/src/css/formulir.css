@@ -1,22 +1,78 @@
 .form-group {
   position: relative;
-  margin-top: clamp(1.5rem, 2.5vw, 30px);
+  display: grid;
+  /* background: rebeccapurple; */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+.form-group.vertical {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  gap: unset;
+  width: 100%;
+}
+.form-input {
+  position: relative;
 }
 
-.form-group label {
+/* horizontal __ */
+.form-input {
+  display: flex;
+  margin-top: clamp(1.5rem, 2.5vw, 30px);
+  gap: 1rem;
+}
+
+.form-input label {
+  position: relative;
+  display: inline-flex;
+  /* display: block; */
+  align-items: center;
+  color: #cccccc8e;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 10rem;
+  height: 35px;
+  max-height: 35px;
+}
+
+.form-group .form-input label {
+  /* width: min-content; */
+  /* text-wrap: nowrap; */
+}
+/* vertival | */
+.form-input.vertical {
+  display: block;
+}
+
+.form-input.vertical label {
   position: absolute;
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
   transition: 0.2s ease all;
-  color: #cccccc8e;
+  color: #cccccc81;
   font-size: 1rem;
 }
 
-.form-group.focused label {
+.form-input.vertical.focused label {
   top: -0.7rem;
-  color: #cccccce1;
+  left: 0;
+  color: #e4e4e481;
   font-weight: 500;
+  text-wrap: nowrap;
+}
+
+.input-group {
+  position: relative;
+  display: inline-flex;
+  flex-direction: unset;
+  gap: 1rem;
+  width: 100%;
+}
+
+.input-group.vertical {
+  flex-direction: column;
 }
 
 input,
@@ -36,4 +92,34 @@ input {
   font-size: clamp(0.75rem, 1.2vw, 0.9rem);
   color: #ffffffe3;
   font-weight: 200;
+}
+
+/* FORM PAPER */
+
+.paper input {
+  border-top: 0px solid transparent;
+  border-bottom: 1px solid #ffffff23;
+  border-left: 0px solid transparent;
+  border-right: 0px solid transparent;
+}
+
+.paper .form-input.vertical label {
+  left: 0;
+}
+
+.paper .form-input.vertical input {
+  height: unset;
+  padding: 0;
+  padding-top: 0.75rem;
+  line-height: unset;
+}
+
+form .action-group {
+  margin-top: 1rem;
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 0.5rem;
+  height: unset;
 }
